@@ -1,19 +1,26 @@
-(ns mockfn.core)
-
-(defn stub [fn-name args->ret-val]
-  (fn [& args]
-    (if (contains? args->ret-val args)
-      (get args->ret-val args)
-      (throw (ex-info (format "Unexpected call to %s with args %s" fn-name args) {})))))
+(ns mockfn.core
+  (:require [mockfn.internals.stub :as stub]))
 
 (defn- to-redefinition
-  [[[function & args] ret-val]]
-  [function `(stub ~function {(seq [~@args]) ~ret-val})])
+  [[function args->ret-val]]
+  [function `(stub/stub ~function ~args->ret-val)])
+
+(defn- map-vals [f coll]
+  (->> coll
+       (map (fn [[k v]] [k (f v)]))
+       (into {})))
+
+(defn- call->args->ret-val
+  [[[_ & args] ret-val]]
+  {(into [] args) ret-val})
 
 (defn- redefinitions
   [bindings]
   (->> bindings
        (partition 2)
+       (group-by ffirst)
+       (map-vals #(map call->args->ret-val %))
+       (map-vals #(apply merge %))
        (map to-redefinition)
        (apply concat)))
 
