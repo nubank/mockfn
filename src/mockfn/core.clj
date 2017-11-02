@@ -1,14 +1,10 @@
 (ns mockfn.core
-  (:require [mockfn.internals.stub :as stub]))
+  (:require [mockfn.internals.misc :as misc]
+            [mockfn.internals.stub :as stub]))
 
 (defn- to-redefinition
   [[function args->ret-val]]
   [function `(stub/stub ~function ~args->ret-val)])
-
-(defn- map-vals [f coll]
-  (->> coll
-       (map (fn [[k v]] [k (f v)]))
-       (into {})))
 
 (defn- call->args->ret-val
   [[[_ & args] ret-val]]
@@ -19,8 +15,8 @@
   (->> bindings
        (partition 2)
        (group-by ffirst)
-       (map-vals #(map call->args->ret-val %))
-       (map-vals #(apply merge %))
+       (misc/map-vals #(map call->args->ret-val %))
+       (misc/map-vals #(apply merge %))
        (map to-redefinition)
        (apply concat)))
 
