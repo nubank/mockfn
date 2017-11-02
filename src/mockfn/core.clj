@@ -1,8 +1,14 @@
 (ns mockfn.core)
 
+(defn stub [fn-name args->ret-val]
+  (fn [& args]
+    (if (contains? args->ret-val args)
+      (get args->ret-val args)
+      (throw (ex-info (format "Unexpected call to %s with args %s" fn-name args) {})))))
+
 (defn- to-redefinition
-  [[[function & args] return-value]]
-  [function `(constantly ~return-value)])
+  [[[function & args] ret-val]]
+  [function `(stub ~function {(seq [~@args]) ~ret-val})])
 
 (defn- redefinitions
   [bindings]

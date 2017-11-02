@@ -12,6 +12,17 @@
       [(one-fn) :stubbed]
       (is (= :stubbed (one-fn)))))
 
+  (testing "stubs one function with arguments"
+    (providing
+      [(one-fn :expected) :stubbed]
+      (is (= :stubbed (one-fn :expected)))
+      (is (thrown-with-msg?
+            ExceptionInfo #"Unexpected call"
+            (one-fn :unexpected)))
+      (is (thrown-with-msg?
+            ExceptionInfo #"Unexpected call"
+            (one-fn)))))
+
   (testing "stubs multiple functions at once"
     (providing
       [(one-fn) :one-fn
