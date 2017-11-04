@@ -3,8 +3,8 @@
             [mockfn.internals.stub :as stub]))
 
 (defn- to-redefinition
-  [[function args->ret-val]]
-  [function `(stub/stub ~function ~args->ret-val)])
+  [[func args->ret-val]]
+  [func `(stub/stub ~func ~args->ret-val)])
 
 (defn- call->args->ret-val
   [[[_ & args] ret-val]]
