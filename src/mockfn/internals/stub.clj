@@ -4,15 +4,12 @@
   [func args]
   (throw (ex-info (format "Unexpected call to %s with args %s" func args) {})))
 
-(defn- stubbed-for
-  [func args args->ret-val counts]
-  (swap! counts #(update % args (fnil inc 0)))
-  (if (contains? args->ret-val args)
-    (get args->ret-val args)
-    (throw-unexpected-call func args)))
+(defn- return-value-for
+  [func definition args]
+  (when-not (-> definition :return-values (contains? args))
+    (throw-unexpected-call func args))
+  (-> definition (get-in [:times-called args]) (swap! inc))
+  (get-in definition [:return-values args]))
 
-(defn stub [func args->ret-val]
-  (let [counts (atom {})]
-    (with-meta
-      (fn [& args] (stubbed-for func (into [] args) args->ret-val counts))
-      {:calls counts})))
+(defn stub [func definition]
+  (fn [& args] (return-value-for func definition (into [] args))))

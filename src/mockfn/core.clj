@@ -1,27 +1,24 @@
 (ns mockfn.core
-  (:require [mockfn.internals.misc :as misc]
-            [mockfn.internals.stub :as stub]))
+  (:require [mockfn.internals.stub :as stub]))
 
-(defn- to-redefinition
-  [[func args->ret-val]]
-  [func `(stub/stub ~func ~args->ret-val)])
-
-(defn- call->args->ret-val
-  [[[_ & args] ret-val]]
-  {(into [] args) ret-val})
-
-(defn- redefinitions
-  [bindings]
-  (->> bindings
-       (partition 2)
-       (group-by ffirst)
-       (misc/map-vals #(map call->args->ret-val %))
-       (misc/map-vals #(apply merge %))
-       (map to-redefinition)
+(defn- redefs-for
+  [func->definition]
+  (->> func->definition
+       (map (fn [[func definition]] [func `(stub/stub ~func ~definition)]))
        (apply concat)))
 
+(defn- func->definition
+  [bindings]
+  (reduce
+    (fn [acc [[func & args] ret-val]]
+      (-> acc
+          (assoc-in [func :return-values (into [] args)] ret-val)
+          (assoc-in [func :times-called (into [] args)] `(atom 0))))
+    {} bindings))
+
 (defmacro providing
-  "I don't do a whole lot."
+  "Stub functions."
   [bindings & body]
-  `(with-redefs ~(redefinitions bindings)
-     (do ~@body)))
+  (let [func->definition# (->> bindings (partition 2) func->definition)]
+    `(with-redefs ~(redefs-for func->definition#)
+       (do ~@body))))
