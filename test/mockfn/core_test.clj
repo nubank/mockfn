@@ -7,17 +7,17 @@
 (def another-fn)
 
 (deftest providing-test
-  (testing "stubs functions without arguments"
+  (testing "mocks functions without arguments"
     (providing
-      [(one-fn) :stubbed]
-      (is (= :stubbed (one-fn)))))
+      [(one-fn) :mocked]
+      (is (= :mocked (one-fn)))))
 
-  (testing "stubs functions with arguments"
+  (testing "mocks functions with arguments"
     (providing
-      [(one-fn :expected) :stubbed
-       (one-fn :expected :also-expected) :also-stubbed]
-      (is (= :stubbed (one-fn :expected)))
-      (is (= :also-stubbed (one-fn :expected :also-expected)))
+      [(one-fn :expected) :mocked
+       (one-fn :expected :also-expected) :also-mocked]
+      (is (= :mocked (one-fn :expected)))
+      (is (= :also-mocked (one-fn :expected :also-expected)))
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
             (one-fn :unexpected)))
@@ -25,7 +25,7 @@
             ExceptionInfo #"Unexpected call"
             (one-fn)))))
 
-  (testing "stubs multiple functions at once"
+  (testing "mocks multiple functions at once"
     (providing
       [(one-fn) :one-fn
        (another-fn) :other-fn]

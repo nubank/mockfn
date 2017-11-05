@@ -1,4 +1,4 @@
-(ns mockfn.internals.stub)
+(ns mockfn.internals.mock)
 
 (defn- throw-unexpected-call
   [func args]
@@ -11,7 +11,7 @@
   (-> spec (get-in [:times-called args]) (swap! inc))
   (get-in spec [:return-values args]))
 
-(defn stub [func spec]
+(defn mock [func spec]
   (with-meta
     (fn [& args] (return-value-for func spec (into [] args)))
     spec))
