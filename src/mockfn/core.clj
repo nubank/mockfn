@@ -1,13 +1,13 @@
 (ns mockfn.core
   (:require [mockfn.internals.stub :as stub]))
 
-(defn- redefs-for
+(defn- as-redefs
   [func->definition]
   (->> func->definition
        (map (fn [[func definition]] [func `(stub/stub ~func ~definition)]))
        (apply concat)))
 
-(defn- func->definition
+(defn- func->spec
   [bindings]
   (reduce
     (fn [acc [[func & args] ret-val]]
@@ -19,6 +19,5 @@
 (defmacro providing
   "Stub functions."
   [bindings & body]
-  (let [func->definition# (->> bindings (partition 2) func->definition)]
-    `(with-redefs ~(redefs-for func->definition#)
-       (do ~@body))))
+  `(with-redefs ~(->> bindings (partition 2) func->spec as-redefs)
+     ~@body))

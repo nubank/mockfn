@@ -33,6 +33,6 @@
         stub       (stub/stub one-fn definition)]
     (testing "counts the number of times that each call was performed"
       (stub) (stub) (stub :arg1)
-      (is (= 2 @(get-in definition [:times-called []])))
-      (is (= 1 @(get-in definition [:times-called [:arg1]])))
-      (is (= 0 @(get-in definition [:times-called [:arg1 :arg2]]))))))
+      (is (= 2 (-> stub meta (get-in [:times-called []]) deref)))
+      (is (= 1 (-> stub meta (get-in [:times-called [:arg1]]) deref)))
+      (is (= 0 (-> stub meta (get-in [:times-called [:arg1 :arg2]]) deref))))))
