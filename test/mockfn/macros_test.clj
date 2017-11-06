@@ -61,7 +61,7 @@
 
   (testing "fails if calls are not performed the expected number of times"
     (is (thrown-with-msg?
-          ExceptionInfo #"Function .* unexpectedly called"
+          ExceptionInfo #"Expected .* with arguments"
           (macros/verifying
             [(one-fn) :one-fn (matchers/exactly 2)]
             (is (= :one-fn (one-fn))))))))

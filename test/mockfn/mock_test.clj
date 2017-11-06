@@ -1,6 +1,7 @@
 (ns mockfn.mock-test
   (:require [clojure.test :refer :all]
-            [mockfn.mock :as mock])
+            [mockfn.mock :as mock]
+            [mockfn.matchers :as matchers])
   (:import (clojure.lang ExceptionInfo)))
 
 (def one-fn)
@@ -31,9 +32,9 @@
                     :times-called   {[]            (atom 0)
                                      [:arg1]       (atom 0)
                                      [:arg1 :arg2] (atom 0)}
-                    :times-expected {[]            [#(= 2 %)]
-                                     [:arg1]       [#(= 1 %)]
-                                     [:arg1 :arg2] [#(= 0 %)]}}
+                    :times-expected {[]            [(matchers/exactly 2)]
+                                     [:arg1]       [(matchers/exactly 1)]
+                                     [:arg1 :arg2] [(matchers/exactly 0)]}}
         mock       (mock/mock one-fn definition)]
     (testing "counts the number of times that each call was performed"
       (mock) (mock) (mock :arg1)
@@ -45,5 +46,5 @@
       (is nil? (mock/verify mock))
       (mock :arg1 :arg2)
       (is (thrown-with-msg?
-            ExceptionInfo #"Function one-fn unexpectedly called 1 times with arguments \[:arg1 :arg2\]"
+            ExceptionInfo #"Expected one-fn with arguments \[:arg1 :arg2\] exactly 0, received 1."
             (mock/verify mock))))))

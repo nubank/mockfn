@@ -1,14 +1,17 @@
-(ns mockfn.mock)
+(ns mockfn.mock
+  (:require [mockfn.matchers :as matchers]))
 
-(defn- throw-unexpected-call-received
-  [func args]
-  (throw (ex-info
-           (format "Unexpected call to %s with args %s." func args) {})))
+(defn- unexpected-call [func args]
+  (format "Unexpected call to %s with args %s." func args))
+
+(defn- doesnt-match [function args matcher times-called]
+  (format "Expected %s with arguments %s %s, received %s."
+          function args (matchers/description matcher) times-called))
 
 (defn- return-value-for
   [func spec args]
   (when-not (-> spec :return-values (contains? args))
-    (throw-unexpected-call-received func args))
+    (throw (ex-info (unexpected-call func args) {})))
   (-> spec (get-in [:times-called args]) (swap! inc))
   (get-in spec [:return-values args]))
 
@@ -17,12 +20,9 @@
     (fn [& args] (return-value-for func spec (into [] args)))
     spec))
 
-(defn- throw-unexpected-call-verified [function args times-called]
-  (throw (ex-info (format "Function %s unexpectedly called %s times with arguments %s." function times-called args) {})))
-
 (defn verify [mock]
-  (doseq [args      (-> mock meta :times-expected keys)
-          expected? (-> mock meta :times-expected (get args))]
+  (doseq [args    (-> mock meta :times-expected keys)
+          matcher (-> mock meta :times-expected (get args))]
     (let [times-called (-> mock meta :times-called (get args) deref)]
-      (when-not (expected? times-called)
-        (throw-unexpected-call-verified (-> mock meta :function) args times-called)))))
+      (when-not (matchers/matches? matcher times-called)
+        (throw (ex-info (doesnt-match (-> mock meta :function) args matcher times-called) {}))))))
