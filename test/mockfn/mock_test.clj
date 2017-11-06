@@ -1,6 +1,6 @@
-(ns mockfn.internals.mock-test
+(ns mockfn.mock-test
   (:require [clojure.test :refer :all]
-            [mockfn.internals.mock :as mock])
+            [mockfn.mock :as mock])
   (:import (clojure.lang ExceptionInfo)))
 
 (def one-fn)
@@ -20,7 +20,7 @@
 
     (testing "throws exception when called with unexpected arguments"
       (is (thrown-with-msg?
-            ExceptionInfo #"Unexpected call to Unbound: #'mockfn.internals.mock-test/one-fn with args \[:unexpected\]"
+            ExceptionInfo #"Unexpected call to Unbound: #'mockfn.mock-test/one-fn with args \[:unexpected\]"
             (mock :unexpected))))))
 
 (deftest mock-call-count-test

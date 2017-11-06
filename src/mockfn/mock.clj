@@ -1,4 +1,4 @@
-(ns mockfn.internals.mock)
+(ns mockfn.mock)
 
 (defn- throw-unexpected-call-received
   [func args]
