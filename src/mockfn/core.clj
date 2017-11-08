@@ -6,3 +6,4 @@
 (def #^{:macro true} verifying #'macros/verifying)
 
 (def exactly matchers/exactly)
+(def at-least matchers/at-least)

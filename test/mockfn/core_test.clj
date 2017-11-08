@@ -12,5 +12,5 @@
 
 (deftest verifying-test
   (verifying
-    [(one-fn) :mocked (exactly 1)]
+    [(one-fn) :mocked (at-least 1)]
     (is (= :mocked (one-fn)))))

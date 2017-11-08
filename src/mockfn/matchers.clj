@@ -8,6 +8,13 @@
 (defrecord Exactly [expected]
   Matcher
   (matches? [this actual] (= expected actual))
-  (description [this] (format "exactly %s" expected)))
+  (description [this] (format "exactly %s times" expected)))
 
 (def exactly ->Exactly)
+
+(defrecord AtLeast [expected]
+  Matcher
+  (matches? [this actual] (>= actual expected))
+  (description [this] (format "at least %s times" expected)))
+
+(def at-least ->AtLeast)

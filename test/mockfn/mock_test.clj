@@ -46,5 +46,5 @@
       (is nil? (mock/verify mock))
       (mock :arg1 :arg2)
       (is (thrown-with-msg?
-            ExceptionInfo #"Expected one-fn with arguments \[:arg1 :arg2\] exactly 0, received 1."
+            ExceptionInfo #"Expected one-fn with arguments \[:arg1 :arg2\] exactly 0 times, received 1."
             (mock/verify mock))))))
