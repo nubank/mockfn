@@ -18,3 +18,10 @@
   (description [this] (format "at least %s times" expected)))
 
 (def at-least ->AtLeast)
+
+(defrecord AtMost [expected]
+  Matcher
+  (matches? [this actual] (<= actual expected))
+  (description [this] (format "at most %s times" expected)))
+
+(def at-most ->AtMost)
