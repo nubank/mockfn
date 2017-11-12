@@ -27,3 +27,12 @@
       (is (false? (matchers/matches? at-most 3))))
     (testing "provides an informative string representation"
       (is (= "at most 2 times" (matchers/description at-most))))))
+
+(deftest any-test
+  (let [any (matchers/any)]
+    (testing "always matches actual"
+      (is (true? (matchers/matches? any :anything)))
+      (is (true? (matchers/matches? any "any thing")))
+      (is (true? (matchers/matches? any 01234567890M))))
+    (testing "provides an informative string representation"
+      (is (= "any" (matchers/description any))))))

@@ -25,3 +25,10 @@
   (description [this] (format "at most %s times" expected)))
 
 (def at-most ->AtMost)
+
+(defrecord Any []
+  Matcher
+  (matches? [this actual] true)
+  (description [this] "any"))
+
+(def any ->Any)
