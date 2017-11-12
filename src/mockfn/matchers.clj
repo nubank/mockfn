@@ -32,3 +32,10 @@
   (description [this] "any"))
 
 (def any ->Any)
+
+(defrecord A [expected]
+  Matcher
+  (matches? [this actual] (instance? expected actual))
+  (description [this] (format "a %s" (pr-str expected))))
+
+(def a ->A)

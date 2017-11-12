@@ -1,6 +1,7 @@
 (ns mockfn.matchers-test
   (:require [clojure.test :refer :all]
-            [mockfn.matchers :as matchers]))
+            [mockfn.matchers :as matchers])
+  (:import (clojure.lang Keyword)))
 
 (deftest exactly-test
   (let [exactly (matchers/exactly 1)]
@@ -36,3 +37,11 @@
       (is (true? (matchers/matches? any 01234567890M))))
     (testing "provides an informative string representation"
       (is (= "any" (matchers/description any))))))
+
+(deftest a-test
+  (let [a (matchers/a Keyword)]
+    (testing "matches actuals of the expected type"
+      (is (true? (matchers/matches? a :keyword)))
+      (is (false? (matchers/matches? a "string"))))
+    (testing "provides an informative string representation"
+      (is (= "a clojure.lang.Keyword" (matchers/description a))))))
