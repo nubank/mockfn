@@ -8,12 +8,16 @@
   (format "Expected %s with arguments %s %s, received %s."
           function args (matchers/description matcher) times-called))
 
+(defn- for-args
+  [m args]
+  (get m args ::unexpected-call))
+
 (defn- return-value-for
   [func spec args]
-  (when-not (-> spec :return-values (contains? args))
+  (when (-> spec :return-values (for-args args) #{::unexpected-call})
     (throw (ex-info (unexpected-call func args) {})))
-  (-> spec (get-in [:times-called args]) (swap! inc))
-  (get-in spec [:return-values args]))
+  (-> spec :times-called (for-args args) (swap! inc))
+  (-> spec :return-values (for-args args)))
 
 (defn mock [func spec]
   (with-meta
