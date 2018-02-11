@@ -9,15 +9,18 @@
 (deftest mock-test
   (let [definition {:return-values {[]            :no-args
                                     [:arg1]       :one-arg
-                                    [:arg1 :arg2] :two-args}
+                                    [:arg1 :arg2] :two-args
+                                    [:nil]        nil}
                     :times-called  {[]            (atom 0)
                                     [:arg1]       (atom 0)
-                                    [:arg1 :arg2] (atom 0)}}
+                                    [:arg1 :arg2] (atom 0)
+                                    [:nil]        (atom 0)}}
         mock       (mock/mock one-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= :no-args (mock)))
       (is (= :one-arg (mock :arg1)))
-      (is (= :two-args (mock :arg1 :arg2))))
+      (is (= :two-args (mock :arg1 :arg2)))
+      (is (= nil (mock :nil))))
 
     (testing "throws exception when called with unexpected arguments"
       (is (thrown-with-msg?
