@@ -8,9 +8,21 @@
   (format "Expected %s with arguments %s %s, received %s."
           function args (matchers/description matcher) times-called))
 
+(defn- matches-args?
+  [args expected]
+  (= expected args))
+
+(defn- first-matching-args
+  [args]
+  (fn [acc expected]
+    (or acc (when (matches-args? args expected) expected))))
+
 (defn- for-args
   [m args]
-  (get m args ::unexpected-call))
+  (let [expected (reduce (first-matching-args args) nil (keys m))]
+    (if expected
+      (get m expected)
+      ::unexpected-call)))
 
 (defn- return-value-for
   [func spec args]
