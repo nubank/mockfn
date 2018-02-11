@@ -1,7 +1,6 @@
 (ns mockfn.core-test
   (:require [clojure.test :refer :all]
-            [mockfn.core :refer :all])
-  (:import (clojure.lang ExceptionInfo)))
+            [mockfn.core :refer :all]))
 
 (def one-fn)
 

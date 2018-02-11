@@ -1,5 +1,4 @@
-(ns mockfn.matchers
-  (:import (clojure.lang IFn)))
+(ns mockfn.matchers)
 
 (defprotocol Matcher
   (matches? [this actual])
