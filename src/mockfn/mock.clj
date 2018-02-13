@@ -8,14 +8,22 @@
   (format "Expected %s with arguments %s %s, received %s."
           function args (matchers/description matcher) times-called))
 
+(defn- matches-arg?
+  [expected arg]
+  (if (satisfies? matchers/Matcher expected)
+    (matchers/matches? expected arg)
+    (= expected arg)))
+
 (defn- matches-args?
-  [args expected]
-  (= expected args))
+  [expected args]
+  (and (= (count expected) (count args))
+       (every? (partial apply matches-arg?)
+               (map vector expected args))))
 
 (defn- first-matching-args
   [args]
   (fn [acc expected]
-    (or acc (when (matches-args? args expected) expected))))
+    (or acc (when (matches-args? expected args) expected))))
 
 (defn- for-args
   [m args]
