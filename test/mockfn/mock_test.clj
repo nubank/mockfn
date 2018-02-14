@@ -65,6 +65,7 @@
       (is (= :equal (mock :argument)))
       (is (= :matchers-a (mock :any-keyword)))
       (is (= :matchers-any (mock "anything"))))
+
     (testing "counts the number of times that each call was performed"
       (is (= 1 (-> mock meta (get-in [:times-called [:argument]]) deref)))
       (is (= 1 (-> mock meta (get-in [:times-called [(matchers/a Keyword)]]) deref)))
