@@ -1,36 +1,27 @@
 (ns mockfn.mock
   (:require [mockfn.matchers :as matchers]))
 
-(defn- unexpected-call [func args]
-  (format "Unexpected call to %s with args %s." func args))
-
-(defn- doesnt-match [function args matcher times-called]
-  (format "Expected %s with arguments %s %s, received %s."
-          function args (matchers/description matcher) times-called))
-
 (defn- matches-arg?
-  [expected arg]
+  [[expected arg]]
   (if (satisfies? matchers/Matcher expected)
     (matchers/matches? expected arg)
     (= expected arg)))
 
 (defn- matches-args?
   [expected args]
-  (and (= (count expected) (count args))
-       (every? (partial apply matches-arg?)
-               (map vector expected args))))
-
-(defn- first-matching-args
-  [args]
-  (fn [acc expected]
-    (or acc (when (matches-args? expected args) expected))))
+  (let [arity-matches?    (= (count expected) (count args))
+        each-arg-matches? (every? matches-arg? (map vector expected args))]
+    (and arity-matches? each-arg-matches? expected)))
 
 (defn- for-args
   [m args]
-  (let [expected (reduce (first-matching-args args) nil (keys m))]
+  (let [expected (some #(matches-args? % args) (keys m))]
     (if expected
       (get m expected)
       ::unexpected-call)))
+
+(defn- unexpected-call [func args]
+  (format "Unexpected call to %s with args %s." func args))
 
 (defn- return-value-for
   [func spec args]
@@ -43,6 +34,10 @@
   (with-meta
     (fn [& args] (return-value-for func spec (into [] args)))
     spec))
+
+(defn- doesnt-match [function args matcher times-called]
+  (format "Expected %s with arguments %s %s, received %s."
+          function args (matchers/description matcher) times-called))
 
 (defn verify [mock]
   (doseq [args    (-> mock meta :times-expected keys)
