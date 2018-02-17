@@ -2,22 +2,6 @@
   (:require [clojure.test :refer :all]
             [mockfn.core :refer :all]))
 
-(def support-fn)
-(defn tested-fn [& args]
-  (apply support-fn args))
-
-(deftest providing-test
-  (providing [(support-fn :argument) :result]
-    (is (= :result (tested-fn :argument)))))
-
-(deftest verifying-test
-  (verifying [(support-fn :argument) :result (exactly 1)]
-    (is (= :result (tested-fn :argument)))))
-
-(deftest argument-matcher-test
-  (providing [(support-fn (at-least 10) (at-most 20)) 15]
-    (is (= 15 (tested-fn 10 20)))))
-
 (def power-available?)
 (def turn-on-lightbulb)
 (def turn-off-lightbulb)

@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [mockfn.macros :as macros]
             [mockfn.matchers :as matchers])
-  (:import (clojure.lang ExceptionInfo)))
+  (:import (clojure.lang ExceptionInfo Keyword)))
 
 (def one-fn)
 (def another-fn)
@@ -25,6 +25,14 @@
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
             (one-fn)))))
+
+  (testing "mocks functions with argument matchers"
+    (macros/providing
+      [(one-fn (matchers/a Keyword)) :mocked]
+      (is (= :mocked (one-fn :expected)))
+      (is (thrown-with-msg?
+            ExceptionInfo #"Unexpected call"
+            (one-fn "unexpected")))))
 
   (testing "mocks multiple functions at once"
     (macros/providing
@@ -51,6 +59,14 @@
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
             (one-fn)))))
+
+  (testing "mocks functions with argument matchers"
+    (macros/verifying
+      [(one-fn (matchers/a Keyword)) :mocked (matchers/exactly 1)]
+      (is (= :mocked (one-fn :expected)))
+      (is (thrown-with-msg?
+            ExceptionInfo #"Unexpected call"
+            (one-fn "unexpected")))))
 
   (testing "mocks multiple functions at once"
     (macros/verifying
