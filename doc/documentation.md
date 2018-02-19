@@ -119,3 +119,22 @@ Always matches.
 ```
 
 Matches if actual value is an instance of the expected type.
+
+## Quirks and Limitations
+
+While `providing` and `verifying` calls can be nested, all required
+stubs and expectations for a single mock must be defined in the same
+call. Mocking a function in a inner `providing` or `verifying` call
+will override any definitions made in the outer scope for the tests
+being run in the inner scope.
+
+```clj
+(testing "nested mocks"
+  (providing [(one-fn :argument-1) :result-1]
+    (providing [(one-fn :argument-2) :result-2
+                (other-fn :argument-3) :result-3]
+      (is (thrown? ExceptionInfo (one-fn :argument-1)))
+      (is (= :result-2 (one-fn :argument-2)))
+      (is (= :result-3 (other-fn :argument-3))))
+    (is (= :result-1 (one-fn :argument-1))))))
+```

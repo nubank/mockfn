@@ -1,6 +1,7 @@
 (ns mockfn.examples
   (:require [clojure.test :refer :all]
-            [mockfn.core :refer :all]))
+            [mockfn.core :refer :all])
+  (:import (clojure.lang ExceptionInfo)))
 
 (def one-fn)
 (def other-fn)
@@ -28,7 +29,16 @@
 
   (testing "argument matchers"
     (providing [(one-fn (at-least 10) (at-most 20)) 15]
-      (is (= 15 (one-fn 12 18))))))
+      (is (= 15 (one-fn 12 18)))))
+
+  (testing "nested mocks"
+    (providing [(one-fn :argument-1) :result-1]
+      (providing [(one-fn :argument-2) :result-2
+                  (other-fn :argument-3) :result-3]
+        (is (thrown? ExceptionInfo (one-fn :argument-1)))
+        (is (= :result-2 (one-fn :argument-2)))
+        (is (= :result-3 (other-fn :argument-3))))
+      (is (= :result-1 (one-fn :argument-1))))))
 
 (def power-available?)
 (def turn-on-lightbulb)
