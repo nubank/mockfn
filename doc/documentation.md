@@ -41,7 +41,7 @@ returns for different arguments.
 It's also possible to configure multiple mocks, for multiple functions,
 at once.
 
-```
+```clj
 (testing "providing with more than one function"
   (providing [(one-fn :argument) :result-1
               (other-fn :argument) :result-2]
@@ -56,9 +56,9 @@ for the number of times a call should be performed during the test. A
 test will fail if this expectation is not met.
 
 ```clj
-(deftest verifying-test
-  (verifying [(support-fn :argument) :result (exactly 1)]
-    (is (= :result (tested-fn :argument)))))
+(testing "verifying"
+  (verifying [(one-fn :argument) :result (exactly 1)]
+    (is (= :result (one-fn :argument)))))
 ```
 
 Notice that the expected number of calls is defined with a
