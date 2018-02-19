@@ -2,6 +2,34 @@
   (:require [clojure.test :refer :all]
             [mockfn.core :refer :all]))
 
+(def one-fn)
+(def other-fn)
+
+(deftest examples-test
+  (testing "providing"
+    (providing [(one-fn) :result]
+      (is (= :result (one-fn)))))
+
+  (testing "providing - one function, different arguments"
+    (providing [(one-fn :argument-1) :result-1
+                (one-fn :argument-2) :result-2]
+      (is (= :result-1 (one-fn :argument-1)))
+      (is (= :result-2 (one-fn :argument-2)))))
+
+  (testing "providing with more than one function"
+    (providing [(one-fn :argument) :result-1
+                (other-fn :argument) :result-2]
+      (is (= :result-1 (one-fn :argument)))
+      (is (= :result-2 (other-fn :argument)))))
+
+  (testing "verifying"
+    (verifying [(one-fn :argument) :result (exactly 1)]
+      (is (= :result (one-fn :argument)))))
+
+  (testing "argument matchers"
+    (providing [(one-fn (at-least 10) (at-most 20)) 15]
+      (is (= 15 (one-fn 12 18))))))
+
 (def power-available?)
 (def turn-on-lightbulb)
 (def turn-off-lightbulb)
