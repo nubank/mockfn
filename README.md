@@ -1,10 +1,12 @@
 # mockfn
 
-A library for mocking Clojure functions.
+[`mockfn`](https://github.com/pmatiello/mockfn) is a library supporting
+mockist test-driven-development in Clojure. It is meant to be used
+alongside a regular testing framework such as `clojure.test`.
 
 ## Usage
 
-Mockfn is available from Clojars.
+Mockfn is available from [Clojars](https://clojars.org/mockfn).
 
 ```clj
 [mockfn "0.1.0-SNAPSHOT"]
