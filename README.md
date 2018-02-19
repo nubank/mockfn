@@ -21,9 +21,8 @@ The `providing` macro replaces a function with a configured mock.
     (is (= :mocked (one-fn)))))
 ```
 
-The `verifying` macro works similarly, but also defines an expectation for the
-number of times a call should be performed during the test.
-
+The `verifying` macro works similarly, but also defines an expectation
+for the number of times a call should be performed during the test.
 
 ```clj
 (deftest verifying-test
@@ -32,7 +31,8 @@ number of times a call should be performed during the test.
     (is (= :mocked (one-fn)))))
 ```
 
-Refer to the [documentation](doc/documentation.md) for more information.
+Refer to the [documentation](doc/documentation.md) for more detailed
+information.
 
 ## License
 
