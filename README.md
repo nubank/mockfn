@@ -6,7 +6,7 @@ alongside a regular testing framework such as `clojure.test`.
 
 ## Usage
 
-Mockfn is available from [Clojars](https://clojars.org/mockfn).
+`mockfn` is available from [Clojars](https://clojars.org/mockfn).
 
 ```clj
 [mockfn "0.1.0-SNAPSHOT"]
