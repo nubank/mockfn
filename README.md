@@ -4,6 +4,8 @@
 mockist test-driven-development in Clojure. It is meant to be used
 alongside a regular testing framework such as `clojure.test`.
 
+[![CircleCI](https://circleci.com/gh/pmatiello/mockfn.svg?style=svg)](https://circleci.com/gh/pmatiello/mockfn)
+
 ## Usage
 
 `mockfn` is available from [Clojars](https://clojars.org/mockfn).
@@ -40,3 +42,4 @@ information.
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
+
