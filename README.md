@@ -4,15 +4,9 @@
 mockist test-driven-development in Clojure. It is meant to be used
 alongside a regular testing framework such as `clojure.test`.
 
+[![Clojars Project](https://img.shields.io/clojars/v/mockfn.svg)](https://clojars.org/mockfn)
+
 [![CircleCI](https://circleci.com/gh/pmatiello/mockfn.svg?style=svg)](https://circleci.com/gh/pmatiello/mockfn)
-
-## Availability
-
-`mockfn` is available from [Clojars](https://clojars.org/mockfn).
-
-```clj
-[mockfn "0.1.0-SNAPSHOT"]
-```
 
 ## Usage
 
