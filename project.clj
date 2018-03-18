@@ -1,4 +1,4 @@
-(defproject mockfn "0.1.0-SNAPSHOT"
+(defproject mockfn "0.1.0"
   :description "A library for mocking Clojure functions."
   :url "https://github.com/pmatiello/mockfn"
   :license {:name "Eclipse Public License"
