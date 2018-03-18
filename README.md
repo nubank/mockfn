@@ -6,7 +6,7 @@ alongside a regular testing framework such as `clojure.test`.
 
 [![CircleCI](https://circleci.com/gh/pmatiello/mockfn.svg?style=svg)](https://circleci.com/gh/pmatiello/mockfn)
 
-## Usage
+## Availability
 
 `mockfn` is available from [Clojars](https://clojars.org/mockfn).
 
@@ -14,7 +14,7 @@ alongside a regular testing framework such as `clojure.test`.
 [mockfn "0.1.0-SNAPSHOT"]
 ```
 
-## Examples
+## Usage
 
 The `providing` macro replaces a function with a configured mock.
 
