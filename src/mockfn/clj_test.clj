@@ -1,4 +1,4 @@
-(ns mockfn.sugar
+(ns mockfn.clj-test
   (:require [clojure.test :as test]
             [mockfn.macros :as macros]))
 

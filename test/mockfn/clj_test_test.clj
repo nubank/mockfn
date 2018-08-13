@@ -1,6 +1,6 @@
-(ns mockfn.sugar-test
+(ns mockfn.clj-test-test
   (:require [clojure.test :refer :all]
-            [mockfn.sugar :as mfn]
+            [mockfn.clj-test :as mfn]
             [mockfn.matchers :as matchers]))
 
 (def tests-run (atom #{}))
