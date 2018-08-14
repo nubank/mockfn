@@ -5,13 +5,12 @@
 (declare providing)
 (declare verifying)
 
-(defn- providing-only?
-  [form]
-  (-> form first resolve #{#'providing}))
+(defn- only?
+  [symbol form]
+  (-> form first resolve #{symbol}))
 
-(defn- verifying-only?
-  [form]
-  (-> form first resolve #{#'verifying}))
+(def ^:private providing-only? (partial only? #'providing))
+(def ^:private verifying-only? (partial only? #'verifying))
 
 (defmacro deftest
   [name & body]
