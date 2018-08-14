@@ -22,3 +22,14 @@
        (macros/providing [~@providing-bindings]
          (macros/verifying [~@verifying-bindings]
            ~@actual-body)))))
+
+(defmacro testing
+  [string & body]
+  (let [providing-bindings (->> body (filter providing-only?) first rest)
+        verifying-bindings (->> body (filter verifying-only?) first rest)
+        actual-body        (->> body (remove providing-only?) (remove verifying-only?))]
+    `(test/testing
+       ~string
+       (macros/providing [~@providing-bindings]
+         (macros/verifying [~@verifying-bindings]
+           ~@actual-body)))))
