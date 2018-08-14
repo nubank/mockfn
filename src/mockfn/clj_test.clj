@@ -12,24 +12,21 @@
 (def ^:private providing-only? (partial only? #'providing))
 (def ^:private verifying-only? (partial only? #'verifying))
 
-(defmacro deftest
-  [name & body]
+(defmacro with-mocking
+  [base-macro name & body]
   (let [providing-bindings (->> body (filter providing-only?) first rest)
         verifying-bindings (->> body (filter verifying-only?) first rest)
         actual-body        (->> body (remove providing-only?) (remove verifying-only?))]
-    `(test/deftest
+    `(~base-macro
        ~name
        (macros/providing [~@providing-bindings]
          (macros/verifying [~@verifying-bindings]
            ~@actual-body)))))
 
+(defmacro deftest
+  [name & body]
+  `(with-mocking test/deftest ~name ~@body))
+
 (defmacro testing
   [string & body]
-  (let [providing-bindings (->> body (filter providing-only?) first rest)
-        verifying-bindings (->> body (filter verifying-only?) first rest)
-        actual-body        (->> body (remove providing-only?) (remove verifying-only?))]
-    `(test/testing
-       ~string
-       (macros/providing [~@providing-bindings]
-         (macros/verifying [~@verifying-bindings]
-           ~@actual-body)))))
+  `(with-mocking test/testing ~name ~@body))
