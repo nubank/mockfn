@@ -29,4 +29,4 @@
 
 (defmacro testing
   [string & body]
-  `(with-mocking test/testing ~name ~@body))
+  `(with-mocking test/testing ~string ~@body))
