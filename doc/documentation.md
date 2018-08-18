@@ -82,14 +82,14 @@ is provided in the `mockfn.clj-test` namespace.
 
 ```clj
 (:require [clojure.test :refer :all]
-            [mockfn.clj-test :as mfn]
-            [mockfn.matchers :as matchers]
-            ...)
+          [mockfn.clj-test :as mfn]
+          [mockfn.matchers :as matchers]
+          ...)
 ```
 
 The `mockfn.clj-test/deftest` and `mockfn.clj-test/testing` macros replace
-`clojure.test/deftest` and `clojure.test/testing` and allow for a flatter
-testing style using `mockfn.clj-test/providing` and
+`clojure.test/deftest` and `clojure.test/testing` and support a flatter (as in
+not nested) mocking style using `mockfn.clj-test/providing` and
 `mockfn.clj-test/verifying`:
 
 ```clj
