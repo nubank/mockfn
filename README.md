@@ -30,7 +30,11 @@ for the number of times a call should be performed during the test.
 ```
 
 Refer to the [documentation](doc/documentation.md) for more detailed
-information.
+information, including:
+
+- [Framework-agonostic usage](#framework-agonostic-usage)
+- [Syntax sugar for `clojure.test`](#syntax-sugar-for-clojuretest)
+- [Argument matchers](#argument-matchers)
 
 ## License
 
