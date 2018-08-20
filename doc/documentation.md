@@ -1,16 +1,16 @@
 # mockfn
 
-[`mockfn`](https://github.com/pmatiello/mockfn) is a library supporting
-mockist test-driven-development in Clojure. It is meant to be used
-alongside a regular testing framework such as `clojure.test`.
+[`mockfn`](https://github.com/pmatiello/mockfn) is a library supporting mockist
+test-driven-development in Clojure. It is meant to be used alongside a regular
+testing framework such as `clojure.test`.
 
-## Basic Usage
+## Framework-agonostic usage
 
-In order to use `mockfn`, it's enough to require it in a test
-namespace.
+In order to use `mockfn`, it's enough to require it in a test namespace.
 
 ```clj
-(:require [mockfn.core :refer :all]
+(:require [mockfn.macros :as mfn]
+          [mockfn.matchers :as matchers]
           ...)
 ```
 
@@ -27,8 +27,8 @@ preconfigured values when called with the expected arguments.
     (is (= :result (one-fn)))))
 ```
 
-As presented below, a mock (`one-fn`) can be configured with different
-returns for different arguments.
+As presented below, a mock (`one-fn`) can be configured with different returns
+for different arguments.
 
 ```clj
 (testing "providing - one function, different arguments"
@@ -38,8 +38,8 @@ returns for different arguments.
     (is (= :result-2 (one-fn :argument-2)))))
 ```
 
-It's also possible to configure multiple mocks, for multiple functions,
-at once.
+It's also possible to configure multiple mocks, for multiple functions, at
+once.
 
 ```clj
 (testing "providing with more than one function"
@@ -51,9 +51,9 @@ at once.
 
 ### Verifying Interactions
 
-The `verifying` macro works similarly, but also defines an expectation
-for the number of times a call should be performed during the test. A
-test will fail if this expectation is not met.
+The `verifying` macro works similarly, but also defines an expectation for the
+number of times a call should be performed during the test. A test will fail if
+this expectation is not met.
 
 ```clj
 (testing "verifying"
@@ -66,14 +66,48 @@ Notice that the expected number of calls is defined with a
 
 ### Argument Matchers
 
-Mocks can be configured to return a specific value for a range of
-different arguments through [matchers](#built-in-matchers). 
+Mocks can be configured to return a specific value for a range of different
+arguments through [matchers](#built-in-matchers).
 
 ```clj
 (testing "argument matchers"
   (providing [(one-fn (at-least 10) (at-most 20)) 15]
     (is (= 15 (one-fn 12 18))))))
 ```
+
+## Syntax sugar for clojure.test
+
+Support for [clojure.test](https://clojure.github.io/clojure/clojure.test-api.html)
+is provided in the `mockfn.clj-test` namespace.
+
+```clj
+(:require [clojure.test :refer :all]
+          [mockfn.clj-test :as mfn]
+          [mockfn.matchers :as matchers]
+          ...)
+```
+
+The `mockfn.clj-test/deftest` and `mockfn.clj-test/testing` macros replace
+`clojure.test/deftest` and `clojure.test/testing` and support a flatter (as in
+not nested) mocking style using `mockfn.clj-test/providing` and
+`mockfn.clj-test/verifying`:
+
+```clj
+(mfn/deftest deftest-with-builtin-mocking
+  (is (= :one-fn (one-fn)))
+  (mfn/providing
+    (one-fn) :one-fn)
+
+  (mfn/testing "testing with built-in-mocking"
+    (is (= :one-fn (one-fn)))
+    (is (= :other-fn (other-fn)))
+    (mfn/verifying
+      (other-fn) :other-fn (exactly 1))))
+```
+
+Notice that in order to leverage the built-in support for mocking in these
+macros, it's necessary to use the `providing` and `verifying` versions provided
+at the `mockfn.clj-test` namespace.
 
 ## Built-in Matchers
 
@@ -122,11 +156,10 @@ Matches if actual value is an instance of the expected type.
 
 ## Quirks and Limitations
 
-While `providing` and `verifying` calls can be nested, all required
-stubs and expectations for a single mock must be defined in the same
-call. Mocking a function in a inner `providing` or `verifying` call
-will override any definitions made in the outer scope for the tests
-being run in the inner scope.
+While `providing` and `verifying` calls can be nested, all required stubs and
+expectations for a single mock must be defined in the same call. Mocking a
+function in a inner `providing` or `verifying` call will override any
+definitions made in the outer scope for the tests being run in the inner scope.
 
 ```clj
 (testing "nested mocks"
