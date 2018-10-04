@@ -1,5 +1,6 @@
 (ns mockfn.mock
-  (:require [mockfn.matchers :as matchers]))
+  (:require [mockfn.matchers :as matchers]
+            [mockfn.parser]))
 
 (defn- matches-arg?
   [[expected arg]]

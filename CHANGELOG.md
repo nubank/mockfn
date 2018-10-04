@@ -4,6 +4,9 @@ All notable changes to this project are documented in this file.
 
 ## Releases
 
+### 0.3.0 - 2018-10-04
+- Allow for use of predicates to match function arguments
+
 ### 0.2.0 - 2018-08-20
 - Added syntax sugar for clojure.test.
 - Deprecated everything in the `mockfn.core` namespace.

@@ -56,17 +56,21 @@
   (let [definition {:function      'one-fn
                     :return-values {[:argument]            :equal
                                     [(matchers/a Keyword)] :matchers-a
+                                    [(matchers/pred odd?)] :odd
                                     [(matchers/any)]       :matchers-any}
                     :times-called  {[:argument]            (atom 0)
                                     [(matchers/a Keyword)] (atom 0)
+                                    [(matchers/pred odd?)] (atom 0)
                                     [(matchers/any)]       (atom 0)}}
         mock       (mock/mock one-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= :equal (mock :argument)))
       (is (= :matchers-a (mock :any-keyword)))
+      (is (= :odd (mock 1)))
       (is (= :matchers-any (mock "anything"))))
 
     (testing "counts the number of times that each call was performed"
       (is (= 1 (-> mock meta (get-in [:times-called [:argument]]) deref)))
       (is (= 1 (-> mock meta (get-in [:times-called [(matchers/a Keyword)]]) deref)))
+      (is (= 1 (-> mock meta (get-in [:times-called [(matchers/pred odd?)]]) deref)))
       (is (= 1 (-> mock meta (get-in [:times-called [(matchers/any)]]) deref))))))
