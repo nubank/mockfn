@@ -24,6 +24,18 @@
       (is (= :result-1 (one-fn :argument)))
       (is (= :result-2 (other-fn :argument)))))
 
+  (testing "providing with explicit predicates (via `pred`) for argument
+           matching"
+    (mfn/providing [(one-fn (matchers/pred even?)) :even]
+      (is (= :even (one-fn 2)))))
+
+  (testing "providing with implicit predicates (via extending `Fn`) for
+           argument matching. Matching exact functions works via `exactly`"
+    (mfn/providing [(one-fn odd?) :odd
+                    (one-fn (matchers/exactly inc)) :inc-fn]
+      (is (= :odd (one-fn 1)))
+      (is (= :inc-fn (one-fn inc)))))
+
   (testing "verifying"
     (mfn/verifying [(one-fn :argument) :result (matchers/exactly 1)]
       (is (= :result (one-fn :argument)))))
