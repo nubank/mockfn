@@ -162,6 +162,28 @@ Matches if actual value is an instance of the expected type.
 
 Matches when the predicate applied to the actual value results in a truthy value.
 
+Functions will automatically be interpreted as `pred` matchers, and hence don't
+need to explicitly be wrapped in the `pred` matcher.
+
+## External Matchers
+
+Using the `pred` matcher, one can call out to external matchers
+
+### matcher-combinators
+
+[`matcher-combinators`](https://github.com/nubank/matcher-combinators) is a
+library for comparing nested datastructures and pretty printing mismatch diffs.
+It can be used to specify `mockfn` argument matching behavior, for example:
+
+```clj
+(require '[matcher-combinators.standalone :refer [match?]]
+         '[matcher-combinators.matchers :as m])
+
+(testing "matcher-combinator example"
+  (providing [(one-fn (match? (m/in-any-order [1 3 2]))) :result-unordered]
+    (is (= :result-unordered (one-fn [3 2 1])))))
+```
+
 ## Quirks and Limitations
 
 While `providing` and `verifying` calls can be nested, all required stubs and

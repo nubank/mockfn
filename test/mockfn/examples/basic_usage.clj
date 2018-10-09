@@ -57,7 +57,7 @@
 
   (testing "matcher-combinators example"
     (mfn/providing [(one-fn (matchers/pred (match? (m/in-any-order [1 2])))) :any-order-1-2
-                    (one-fn (matchers/pred (match? [3 4]))) :ordered-3-4
+                    (one-fn (match? [3 4])) :ordered-3-4
                     (one-fn (matchers/any)) :other]
       (is (= :any-order-1-2 (one-fn [1 2])))
       (is (= :any-order-1-2 (one-fn [2 1])))
