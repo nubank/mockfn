@@ -154,6 +154,14 @@ Always matches.
 
 Matches if actual value is an instance of the expected type.
 
+### pred
+
+```clj
+(pred odd?)
+```
+
+Matches when the predicate applied to the actual value results in a truthy value.
+
 ## Quirks and Limitations
 
 While `providing` and `verifying` calls can be nested, all required stubs and
