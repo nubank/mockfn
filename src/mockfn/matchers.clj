@@ -38,3 +38,15 @@
   (description [this] (format "a %s" (pr-str expected))))
 
 (def a ->A)
+
+(defrecord Predicate [predicate]
+  Matcher
+  (matches? [_this actual]
+    (try
+      (predicate actual)
+      (catch Exception _e false)))
+  (description [_this]
+    (format "satisfies %s predicate function"
+            (str predicate))))
+
+(def pred ->Predicate)
