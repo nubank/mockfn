@@ -1,9 +1,7 @@
 (ns mockfn.examples.basic-usage
   (:require [clojure.test :refer :all]
             [mockfn.macros :as mfn]
-            [mockfn.matchers :as matchers]
-            [matcher-combinators.standalone :refer [match?]]
-            [matcher-combinators.matchers :as m])
+            [mockfn.matchers :as matchers])
   (:import (clojure.lang ExceptionInfo)))
 
 (def one-fn)
@@ -53,14 +51,4 @@
         (is (thrown? ExceptionInfo (one-fn :argument-1)))
         (is (= :result-2 (one-fn :argument-2)))
         (is (= :result-3 (other-fn :argument-3))))
-      (is (= :result-1 (one-fn :argument-1)))))
-
-  (testing "matcher-combinators example"
-    (mfn/providing [(one-fn (matchers/pred (match? (m/in-any-order [1 2])))) :any-order-1-2
-                    (one-fn (match? [3 4])) :ordered-3-4
-                    (one-fn (matchers/any)) :other]
-      (is (= :any-order-1-2 (one-fn [1 2])))
-      (is (= :any-order-1-2 (one-fn [2 1])))
-      (is (= :ordered-3-4 (one-fn [3 4])))
-      (is (= :other (one-fn [4 3])))
-      (is (= :other (one-fn [1]))))))
+      (is (= :result-1 (one-fn :argument-1))))))
