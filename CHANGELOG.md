@@ -4,7 +4,9 @@ All notable changes to this project are documented in this file.
 
 ## Releases
 
-### 0.3.0 - 2018-10-04
+### 0.3.0 - 2019-01-24
+- Allow mocks to not only return base values, but invoke function calls.
+  This enables mocked functions to throw exceptions.
 - Allow for use of predicates to match function arguments
 
 ### 0.2.0 - 2018-08-20

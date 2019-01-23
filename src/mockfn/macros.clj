@@ -18,6 +18,10 @@
           (assoc-in [func :times-expected (into [] args)] (into [] times-expected))))
     {} bindings))
 
+(defn calling
+  "Invoke mocked value as a function instead of returning it"
+  [func] (mock/->Calling func))
+
 (defmacro providing
   "Mocks functions."
   [bindings & body]

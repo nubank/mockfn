@@ -38,6 +38,14 @@ for different arguments.
     (is (= :result-2 (one-fn :argument-2)))))
 ```
 
+If you would like to call the value instead of returning it, use `mockfn.macros/calling`:
+
+```clj
+(testing "providing - calling mocked value as a function"
+  (providing [(one-fn) (calling #(throw (ex-info "one-fn failed" {:args 'none})))]
+    (is (thrown? ExceptionInfo (one-fn)))))
+```
+
 It's also possible to configure multiple mocks, for multiple functions, at
 once.
 
