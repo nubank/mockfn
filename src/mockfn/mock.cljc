@@ -1,6 +1,7 @@
 (ns mockfn.mock
   (:require [mockfn.matchers :as matchers]
-            [mockfn.parser]))
+            [mockfn.parser]
+            [mockfn.utils :as utils]))
 
 (defrecord Calling [function])
 
@@ -25,8 +26,16 @@
       (get m expected)
       ::unexpected-call)))
 
+(defn- remap-unbound-var [func]
+  #?(:cljs (if (nil? func) ;; cljs doesn't have unbound vars
+             "<unbound var>"
+             func)
+     :clj func))
+
 (defn- unexpected-call [func args]
-  (format "Unexpected call to %s with args %s." func args))
+  (utils/formatted "Unexpected call to %s with args %s"
+                   (remap-unbound-var func)
+                   args))
 
 (defn- get-value-for
   [func spec args]
@@ -52,9 +61,12 @@
     (fn [& args] (return-value-for-call func spec (into [] args)))
     spec))
 
-(defn- doesnt-match [function args matcher times-called]
-  (format "Expected %s with arguments %s %s, received %s."
-          function args (matchers/description matcher) times-called))
+(defn- doesnt-match [func args matcher times-called]
+  (utils/formatted "Expected %s with arguments %s %s, received %s."
+                   (remap-unbound-var func)
+                   args
+                   (matchers/description matcher)
+                   times-called))
 
 (defn verify [mock]
   (doseq [args    (-> mock meta :times-expected keys)

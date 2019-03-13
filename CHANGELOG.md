@@ -4,7 +4,8 @@ All notable changes to this project are documented in this file.
 
 ## Releases
 
-### 0.4.0 - UNRELEASED
+### 0.4.0 - 2019-03-13
+- Clojurescript support
 - Allow mocks to call the original function implementation.
 
 ### 0.3.0 - 2019-01-25

@@ -1,4 +1,6 @@
 (ns mockfn.macros
+  #?(:cljs
+     (:require-macros [mockfn.macros]))
   (:require [mockfn.mock :as mock]))
 
 (defn- as-redefs

@@ -1,7 +1,8 @@
 (ns mockfn.matchers-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
+            [mockfn.utils :as utils]
             [mockfn.matchers :as matchers])
-  (:import (clojure.lang Keyword)))
+  #?(:clj (:import (clojure.lang Keyword))))
 
 (deftest exactly-test
   (let [exactly (matchers/exactly 1)]
@@ -43,10 +44,12 @@
       (is (= "any" (matchers/description any))))))
 
 (deftest a-test
-  (let [a (matchers/a Keyword)]
+  (let [a (matchers/a Keyword)
+        keyword-desc #?(:clj "a clojure.lang.Keyword"
+                        :cljs "a cljs.core/Keyword")]
     (testing "matches actuals of the expected type"
       (is (true? (matchers/matches? a :keyword)))
       (is (false? (matchers/matches? a "string"))))
 
     (testing "provides an informative string representation"
-      (is (= "a clojure.lang.Keyword" (matchers/description a))))))
+      (is (= keyword-desc (matchers/description a))))))
