@@ -6,6 +6,7 @@
 
 (def one-fn)
 (def other-fn)
+(defn implemented-fn [x] x)
 
 (deftest examples-test
   (testing "providing"
@@ -41,6 +42,12 @@
                     (one-fn (matchers/exactly inc)) :inc-fn]
       (is (= :odd (one-fn 1)))
       (is (= :inc-fn (one-fn inc)))))
+
+  (testing "providing - unmocked"
+    (mfn/providing [(implemented-fn :argument-1) mfn/unmocked
+                    (implemented-fn :argument-2) :result-2]
+      (is (= :argument-1 (implemented-fn :argument-1)))
+      (is (= :result-2 (implemented-fn :argument-2)))))
 
   (testing "verifying"
     (mfn/verifying [(one-fn :argument) :result (matchers/exactly 1)]

@@ -2,7 +2,9 @@
   (:require [mockfn.matchers :as matchers]
             [mockfn.parser]))
 
-(defrecord Calling [func])
+(defrecord Calling [function])
+
+(defrecord CallingOriginal [])
 
 (defn- matches-arg?
   [[expected arg]]
@@ -33,15 +35,21 @@
   (-> spec :times-called (for-args args) (swap! inc))
   (-> spec :return-values (for-args args)))
 
-(defn- base-value-or-invoke [func spec args]
+(defn- return-value-for-call [func spec args]
   (let [mocked-value (get-value-for func spec args)]
-    (if (instance? Calling mocked-value)
-      (apply (:func mocked-value) args)
+    (cond
+      (instance? Calling mocked-value)
+      (-> mocked-value :function (apply args))
+
+      (instance? CallingOriginal mocked-value)
+      (-> spec :function (apply args))
+
+      :default
       mocked-value)))
 
 (defn mock [func spec]
   (with-meta
-    (fn [& args] (base-value-or-invoke func spec (into [] args)))
+    (fn [& args] (return-value-for-call func spec (into [] args)))
     spec))
 
 (defn- doesnt-match [function args matcher times-called]

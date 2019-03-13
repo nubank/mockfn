@@ -74,3 +74,22 @@
       (is (= 1 (-> mock meta (get-in [:times-called [(matchers/a Keyword)]]) deref)))
       (is (= 1 (-> mock meta (get-in [:times-called [(matchers/pred odd?)]]) deref)))
       (is (= 1 (-> mock meta (get-in [:times-called [(matchers/any)]]) deref))))))
+
+(deftest mock-unmocked
+  (let [definition {:function      (fn [& args] args)
+                    :return-values {[]            (mock/->CallingOriginal)
+                                    [:arg1]       (mock/->CallingOriginal)
+                                    [:arg1 :arg2] (mock/->CallingOriginal)}
+                    :times-called  {[]            (atom 0)
+                                    [:arg1]       (atom 0)
+                                    [:arg1 :arg2] (atom 0)}}
+        mock       (mock/mock one-fn definition)]
+    (testing "returns to expected calls with configured return values"
+      (is (= nil (mock)))
+      (is (= [:arg1] (mock :arg1)))
+      (is (= [:arg1 :arg2] (mock :arg1 :arg2))))
+
+    (testing "throws exception when called with unexpected arguments"
+      (is (thrown-with-msg?
+            ExceptionInfo #"Unexpected call to Unbound: #'mockfn.mock-test/one-fn with args \[:unexpected\]"
+            (mock :unexpected))))))

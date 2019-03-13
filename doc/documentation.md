@@ -38,14 +38,6 @@ for different arguments.
     (is (= :result-2 (one-fn :argument-2)))))
 ```
 
-If you would like to call the value instead of returning it, use `mockfn.macros/calling`:
-
-```clj
-(testing "providing - calling mocked value as a function"
-  (providing [(one-fn) (calling #(throw (ex-info "one-fn failed" {:args 'none})))]
-    (is (thrown? ExceptionInfo (one-fn)))))
-```
-
 It's also possible to configure multiple mocks, for multiple functions, at
 once.
 
@@ -55,6 +47,28 @@ once.
               (other-fn :argument) :result-2]
     (is (= :result-1 (one-fn :argument)))
     (is (= :result-2 (other-fn :argument))))))
+```
+
+#### `calling`
+
+If you would like to call the value instead of returning it, use `mockfn.macros/calling`:
+
+```clj
+(testing "providing - calling mocked value as a function"
+  (providing [(one-fn) (calling #(throw (ex-info "one-fn failed" {:args 'none})))]
+    (is (thrown? ExceptionInfo (one-fn)))))
+```
+
+#### `unmocked`
+
+When mocking it is sometimes useful to set some mocks to point to their
+original implementation. This can be done by using `mockfn.macros/unmocked`:
+
+```clj
+(testing "providing - using unmocked to default to original function"
+  (providing [(one-fn :argument-1) unmocked
+              (one-fn :argument-2) :result-2]
+    (is (thrown? ExceptionInfo (one-fn)))))
 ```
 
 ### Verifying Interactions
@@ -175,7 +189,9 @@ need to explicitly be wrapped in the `pred` matcher.
 
 ## External Matchers
 
-Using the `pred` matcher, one can call out to external matchers
+Functions placed in the argument position of mocks will be treated as `pred`
+matchers by default. Thus, one can make use of external predicate functions to
+perform matching.
 
 ### matcher-combinators
 

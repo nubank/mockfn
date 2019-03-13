@@ -19,8 +19,12 @@
     {} bindings))
 
 (defn calling
-  "Invoke mocked value as a function instead of returning it"
+  "Invoke mocked value as a function instead of returning it."
   [func] (mock/->Calling func))
+
+(def unmocked
+  "Invoke the original implementation of the mocked function."
+  (mock/->CallingOriginal))
 
 (defmacro providing
   "Mocks functions."
