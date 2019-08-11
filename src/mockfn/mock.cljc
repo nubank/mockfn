@@ -69,7 +69,7 @@
                    times-called))
 
 (defn verify [mock]
-  (let [mock (if (var? mock) (var-get mock) mock)]
+  (let [mock (if (var? mock) (deref mock) mock)]
     (doseq [args    (-> mock meta :times-expected keys)
             matcher (-> mock meta :times-expected (get args))]
       (let [times-called (-> mock meta :times-called (get args) deref)]

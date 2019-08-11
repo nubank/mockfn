@@ -1,5 +1,4 @@
-(ns mockfn.fixtures
-  (:require [clojure.test :refer :all]))
+(ns mockfn.fixtures)
 
 (declare one-fn)
 (declare other-fn)
