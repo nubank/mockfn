@@ -71,6 +71,17 @@ original implementation. This can be done by using `mockfn.macros/unmocked`:
     (is (thrown? ExceptionInfo (one-fn)))))
 ```
 
+#### Private functions
+
+Private functions can be mocked by following Clojure's convention of referring
+them by their var, prefixing them with `#'`.
+
+```clj
+(testing "providing - private function"
+  (providing [(#'private-fn) :result]
+    (is (= :result (#'private-fn)))))
+```
+
 ### Verifying Interactions
 
 The `verifying` macro works similarly, but also defines an expectation for the
