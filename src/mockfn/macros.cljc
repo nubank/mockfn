@@ -3,10 +3,19 @@
      (:require-macros [mockfn.macros]))
   (:require [mockfn.mock :as mock]))
 
+(defn- func->func-sym
+  "Extracts the symbol for the function being mocked.
+
+  When a symbol fn is passed as argument, returns fn.
+  When a (var fn) is passed as argument (such as when mocking private
+  functions), returns fn instead of (var fn)."
+  [func]
+  (if (seq? func) (last func) func))
+
 (defn- as-redefs
   [func->definition]
   (->> func->definition
-       (map (fn [[func definition]] [func `(mock/mock ~func ~definition)]))
+       (map (fn [[func definition]] [(func->func-sym func) `(mock/mock ~func ~definition)]))
        (apply concat)))
 
 (defn- func->spec
@@ -37,7 +46,9 @@
 (defmacro verifying
   "Mocks functions and verifies calls."
   [bindings & body]
-  (let [specs# (->> bindings (partition 3) func->spec)]
+  (let [specs# (->> bindings (partition 3) func->spec)
+        mocks# (->> specs# keys)]
     `(with-redefs ~(as-redefs specs#)
        ~@body
-       (doseq [mock# (keys ~specs#)] (mock/verify mock#)))))
+       (doseq [mock# (keys ~specs#)]
+         (mock/verify mock#)))))

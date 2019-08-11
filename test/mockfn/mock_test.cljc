@@ -1,10 +1,9 @@
 (ns mockfn.mock-test
   (:require [clojure.test :refer [deftest testing is]]
             [mockfn.mock :as mock]
-            [mockfn.matchers :as matchers])
+            [mockfn.matchers :as matchers]
+            [mockfn.fixtures :as fixtures])
   #?(:clj (:import (clojure.lang ExceptionInfo Keyword))))
-
-(def one-fn)
 
 (deftest mock-test
   (let [definition {:return-values {[]            :no-args
@@ -15,7 +14,7 @@
                                     [:arg1]       (atom 0)
                                     [:arg1 :arg2] (atom 0)
                                     [:nil]        (atom 0)}}
-        mock       (mock/mock one-fn definition)]
+        mock       (mock/mock fixtures/one-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= :no-args (mock)))
       (is (= :one-arg (mock :arg1)))
@@ -23,14 +22,14 @@
       (is (= nil (mock :nil))))
 
     (testing "throws exception when called with unexpected arguments"
-      (let [message-regex #?(:clj #"Unexpected call to Unbound: #'mockfn.mock-test/one-fn with args \[:unexpected\]"
+      (let [message-regex #?(:clj #"Unexpected call to Unbound: #'mockfn.fixtures/one-fn with args \[:unexpected\]"
                              :cljs #"Unexpected call to <unbound var> with args \[:unexpected\]")]
         (is (thrown-with-msg?
               ExceptionInfo message-regex
               (mock :unexpected)))))))
 
 (deftest mock-call-count-test
-  (let [definition {:function       'one-fn
+  (let [definition {:function       'fixtures/one-fn
                     :return-values  {[]            :no-args
                                      [:arg1]       :one-arg
                                      [:arg1 :arg2] :two-args}
@@ -40,7 +39,7 @@
                     :times-expected {[]            [(matchers/exactly 2)]
                                      [:arg1]       [(matchers/exactly 1)]
                                      [:arg1 :arg2] [(matchers/exactly 0)]}}
-        mock       (mock/mock one-fn definition)]
+        mock       (mock/mock fixtures/one-fn definition)]
     (testing "counts the number of times that each call was performed"
       (mock) (mock) (mock :arg1)
       (is (= 2 (-> mock meta (get-in [:times-called []]) deref)))
@@ -52,11 +51,11 @@
       (mock :arg1 :arg2)
       (is (thrown-with-msg?
             ExceptionInfo
-            #"Expected one-fn with arguments \[:arg1 :arg2\] exactly 0 times, received 1."
+            #"Expected fixtures/one-fn with arguments \[:arg1 :arg2\] exactly 0 times, received 1."
             (mock/verify mock))))))
 
 (deftest mock-match-argument-test
-  (let [definition {:function      'one-fn
+  (let [definition {:function      'fixtures/one-fn
                     :return-values {[:argument]            :equal
                                     [(matchers/a Keyword)] :matchers-a
                                     [(matchers/pred odd?)] :odd
@@ -65,7 +64,7 @@
                                     [(matchers/a Keyword)] (atom 0)
                                     [(matchers/pred odd?)] (atom 0)
                                     [(matchers/any)]       (atom 0)}}
-        mock       (mock/mock one-fn definition)]
+        mock       (mock/mock fixtures/one-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= :equal (mock :argument)))
       (is (= :matchers-a (mock :any-keyword)))
@@ -86,16 +85,26 @@
                     :times-called  {[]            (atom 0)
                                     [:arg1]       (atom 0)
                                     [:arg1 :arg2] (atom 0)}}
-        mock       (mock/mock one-fn definition)]
+        mock       (mock/mock fixtures/one-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= nil (mock)))
       (is (= [:arg1] (mock :arg1)))
       (is (= [:arg1 :arg2] (mock :arg1 :arg2))))
 
     (testing "throws exception when called with unexpected arguments"
-      (let [message-regex #?(:clj #"Unexpected call to Unbound: #'mockfn.mock-test/one-fn with args \[:unexpected\]"
+      (let [message-regex #?(:clj #"Unexpected call to Unbound: #'mockfn.fixtures/one-fn with args \[:unexpected\]"
                              :cljs #"Unexpected call to <unbound var> with args \[:unexpected\]")]
         (is (thrown-with-msg?
               ExceptionInfo
               message-regex
               (mock :unexpected)))))))
+
+(deftest private-fn-mock-test
+  (let [definition {:return-values {[]      :no-args
+                                    [:arg1] :one-arg}
+                    :times-called  {[]      (atom 0)
+                                    [:arg1] (atom 0)}}
+        mock       (mock/mock #'fixtures/private-fn definition)]
+    (testing "returns to expected calls with configured return values"
+      (is (= :no-args (mock)))
+      (is (= :one-arg (mock :arg1))))))
