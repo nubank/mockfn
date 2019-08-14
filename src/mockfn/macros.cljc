@@ -46,8 +46,7 @@
 (defmacro verifying
   "Mocks functions and verifies calls."
   [bindings & body]
-  (let [specs# (->> bindings (partition 3) func->spec)
-        mocks# (->> specs# keys)]
+  (let [specs# (->> bindings (partition 3) func->spec)]
     `(with-redefs ~(as-redefs specs#)
        ~@body
        (doseq [mock# (keys ~specs#)]
