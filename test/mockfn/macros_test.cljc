@@ -1,83 +1,98 @@
 (ns mockfn.macros-test
   (:require [clojure.test :refer [deftest testing is]]
             [mockfn.macros :as macros]
-            [mockfn.matchers :as matchers])
+            [mockfn.matchers :as matchers]
+            [mockfn.fixtures :as fixtures])
   #?(:clj (:import (clojure.lang ExceptionInfo Keyword))))
-
-(def one-fn)
-(def another-fn)
 
 (deftest providing-test
   (testing "mocks functions without arguments"
     (macros/providing
-      [(one-fn) :mocked]
-      (is (= :mocked (one-fn)))))
+      [(fixtures/one-fn) :mocked]
+      (is (= :mocked (fixtures/one-fn)))))
 
   (testing "mocks functions with arguments"
     (macros/providing
-      [(one-fn :expected) :mocked
-       (one-fn :expected :also-expected) :also-mocked]
-      (is (= :mocked (one-fn :expected)))
-      (is (= :also-mocked (one-fn :expected :also-expected)))
+      [(fixtures/one-fn :expected) :mocked
+       (fixtures/one-fn :expected :also-expected) :also-mocked]
+      (is (= :mocked (fixtures/one-fn :expected)))
+      (is (= :also-mocked (fixtures/one-fn :expected :also-expected)))
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
-            (one-fn :unexpected)))
+            (fixtures/one-fn :unexpected)))
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
-            (one-fn)))))
+            (fixtures/one-fn)))))
 
   (testing "mocks functions with argument matchers"
     (macros/providing
-      [(one-fn (matchers/a Keyword)) :mocked]
-      (is (= :mocked (one-fn :expected)))
+      [(fixtures/one-fn (matchers/a Keyword)) :mocked]
+      (is (= :mocked (fixtures/one-fn :expected)))
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
-            (one-fn "unexpected")))))
+            (fixtures/one-fn "unexpected")))))
 
   (testing "mocks multiple functions at once"
     (macros/providing
-      [(one-fn) :one-fn
-       (another-fn) :other-fn]
-      (is (= :one-fn (one-fn)))
-      (is (= :other-fn (another-fn))))))
+      [(fixtures/one-fn) :fixtures/one-fn
+       (fixtures/other-fn) :fixtures/other-fn]
+      (is (= :fixtures/one-fn (fixtures/one-fn)))
+      (is (= :fixtures/other-fn (fixtures/other-fn)))))
+
+  (testing "mocks private functions"
+    (macros/providing
+      [(#'fixtures/private-fn) :mocked]
+      (is (= :mocked (#'fixtures/private-fn))))))
 
 (deftest verifying-test
   (testing "mocks functions without arguments"
     (macros/verifying
-      [(one-fn) :mocked (matchers/exactly 1)]
-      (is (= :mocked (one-fn)))))
+      [(fixtures/one-fn) :mocked (matchers/exactly 1)]
+      (is (= :mocked (fixtures/one-fn)))))
 
   (testing "mocks functions with arguments"
     (macros/verifying
-      [(one-fn :expected) :mocked (matchers/exactly 1)
-       (one-fn :expected :also-expected) :also-mocked (matchers/exactly 1)]
-      (is (= :mocked (one-fn :expected)))
-      (is (= :also-mocked (one-fn :expected :also-expected)))
+      [(fixtures/one-fn :expected) :mocked (matchers/exactly 1)
+       (fixtures/one-fn :expected :also-expected) :also-mocked (matchers/exactly 1)]
+      (is (= :mocked (fixtures/one-fn :expected)))
+      (is (= :also-mocked (fixtures/one-fn :expected :also-expected)))
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
-            (one-fn :unexpected)))
+            (fixtures/one-fn :unexpected)))
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
-            (one-fn)))))
+            (fixtures/one-fn)))))
 
   (testing "mocks functions with argument matchers"
     (macros/verifying
-      [(one-fn (matchers/a Keyword)) :mocked (matchers/exactly 1)]
-      (is (= :mocked (one-fn :expected)))
+      [(fixtures/one-fn (matchers/a Keyword)) :mocked (matchers/exactly 1)]
+      (is (= :mocked (fixtures/one-fn :expected)))
       (is (thrown-with-msg?
             ExceptionInfo #"Unexpected call"
-            (one-fn "unexpected")))))
+            (fixtures/one-fn "unexpected")))))
 
   (testing "mocks multiple functions at once"
     (macros/verifying
-      [(one-fn) :one-fn (matchers/exactly 1)
-       (another-fn) :other-fn (matchers/exactly 1)]
-      (is (= :one-fn (one-fn)))
-      (is (= :other-fn (another-fn)))))
+      [(fixtures/one-fn) :fixtures/one-fn (matchers/exactly 1)
+       (fixtures/other-fn) :fixtures/other-fn (matchers/exactly 1)]
+      (is (= :fixtures/one-fn (fixtures/one-fn)))
+      (is (= :fixtures/other-fn (fixtures/other-fn)))))
 
   (testing "fails if calls are not performed the expected number of times"
     (is (thrown-with-msg?
           ExceptionInfo #"Expected .* with arguments"
           (macros/verifying
-            [(one-fn) :one-fn (matchers/exactly 2)]
-            (is (= :one-fn (one-fn))))))))
+            [(fixtures/one-fn) :fixtures/one-fn (matchers/exactly 2)]
+            (is (= :fixtures/one-fn (fixtures/one-fn)))))))
+
+  (testing "mocks private functions"
+    (macros/verifying
+      [(#'fixtures/private-fn) :mocked-private (matchers/exactly 1)]
+      (is (= :mocked-private (#'fixtures/private-fn)))))
+
+  (testing "fails if calls to private functions are not performed the expected number of times"
+    (is (thrown-with-msg?
+          ExceptionInfo #"Expected .* with arguments"
+          (macros/verifying
+            [(#'fixtures/private-fn) :mocked (matchers/exactly 2)]
+            (is (= :mocked (#'fixtures/private-fn))))))))

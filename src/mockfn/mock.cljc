@@ -27,10 +27,10 @@
       ::unexpected-call)))
 
 (defn- remap-unbound-var [func]
-  #?(:cljs (if (nil? func) ;; cljs doesn't have unbound vars
+  #?(:cljs (if (nil? func)                                  ;; cljs doesn't have unbound vars
              "<unbound var>"
              func)
-     :clj func))
+     :clj  func))
 
 (defn- unexpected-call [func args]
   (utils/formatted "Unexpected call to %s with args %s"
@@ -68,9 +68,15 @@
                    (matchers/description matcher)
                    times-called))
 
+(defn- mock->meta [mock]
+  (cond-> mock
+          (var? mock) deref
+          :then meta))
+
 (defn verify [mock]
-  (doseq [args    (-> mock meta :times-expected keys)
-          matcher (-> mock meta :times-expected (get args))]
-    (let [times-called (-> mock meta :times-called (get args) deref)]
-      (when-not (matchers/matches? matcher times-called)
-        (throw (ex-info (doesnt-match (-> mock meta :function) args matcher times-called) {}))))))
+  (let [meta (mock->meta mock)]
+    (doseq [args    (-> meta :times-expected keys)
+            matcher (-> meta :times-expected (get args))]
+      (let [times-called (-> meta :times-called (get args) deref)]
+        (when-not (matchers/matches? matcher times-called)
+          (throw (ex-info (doesnt-match (-> meta :function) args matcher times-called) {})))))))
