@@ -1,6 +1,5 @@
 (ns mockfn.matchers-test
   (:require [clojure.test :refer [deftest testing is]]
-            [mockfn.utils :as utils]
             [mockfn.matchers :as matchers])
   #?(:clj (:import (clojure.lang Keyword))))
 

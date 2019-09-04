@@ -1,5 +1,5 @@
 (ns mockfn.matchers
-  (:require [mockfn.utils :as utils]))
+  (:require [mockfn.internal.utils :as utils]))
 
 (defprotocol Matcher
   (matches? [this actual])

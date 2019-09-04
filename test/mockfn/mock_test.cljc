@@ -79,9 +79,9 @@
 
 (deftest mock-unmocked
   (let [definition {:function      (fn [& args] args)
-                    :return-values {[]            (mock/->CallingOriginal)
-                                    [:arg1]       (mock/->CallingOriginal)
-                                    [:arg1 :arg2] (mock/->CallingOriginal)}
+                    :return-values {[]            (mock/calling-original)
+                                    [:arg1]       (mock/calling-original)
+                                    [:arg1 :arg2] (mock/calling-original)}
                     :times-called  {[]            (atom 0)
                                     [:arg1]       (atom 0)
                                     [:arg1 :arg2] (atom 0)}}

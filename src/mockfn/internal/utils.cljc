@@ -1,4 +1,4 @@
-(ns mockfn.utils
+(ns mockfn.internal.utils
   #?(:cljs
      (:require
        [goog.string :as gstring]
