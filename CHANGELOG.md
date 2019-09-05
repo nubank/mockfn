@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file.
 
 ## Releases
 
-### 0.5.0 - ???
+### 0.5.0 - 2019-09-04
 - Support for mocking private functions.
 
 ### 0.4.0 - 2019-03-13
