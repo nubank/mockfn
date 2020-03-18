@@ -2,9 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## Releases
-
-### Unreleased
+### 0.6.0 - 2020-03-18
 - `verifying` now returns the return value of the body (like `providing` does)
 
 ### 0.5.0 - 2019-09-04
