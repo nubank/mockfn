@@ -5,6 +5,13 @@
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.0"]]
 
+  :repositories [["publish" {:url "https://clojars.org/repo"
+                             :username :env/clojars_username
+                             :password :env/clojars_passwd
+                             :sign-releases false}]]
+
+  :plugins [[lein-project-version "0.1.0"]]
+
   :profiles {:dev {:plugins [[lein-cljsbuild "1.1.7"]
                              [lein-doo "0.1.11"]]
                    :dependencies [[org.clojure/clojurescript "1.10.520"]]}}
