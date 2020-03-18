@@ -4,9 +4,7 @@
 supporting mockist test-driven-development in Clojure. It is meant to be used
 alongside a regular testing framework such as `clojure.test`.
 
-[![Clojars Project](https://img.shields.io/clojars/v/mockfn.svg)](https://clojars.org/mockfn)
-
-[![CircleCI](https://circleci.com/gh/pmatiello/mockfn.svg?style=svg)](https://circleci.com/gh/pmatiello/mockfn)
+[![Clojars Project](https://img.shields.io/clojars/v/nubank/mockfn.svg)](https://clojars.org/nubank/mockfn)
 
 ## Usage
 
