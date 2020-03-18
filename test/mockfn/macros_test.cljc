@@ -8,8 +8,16 @@
 (deftest providing-test
   (testing "mocks functions without arguments"
     (macros/providing
-      [(fixtures/one-fn) :mocked]
-      (is (= :mocked (fixtures/one-fn)))))
+     [(fixtures/one-fn) :mocked]
+     (is (= :mocked (fixtures/one-fn)))))
+
+  (testing "returns return value of body"
+    (is (true? (macros/providing
+                [(fixtures/one-fn) :mocked]
+                (= :mocked (fixtures/one-fn)))))
+    (is (false? (macros/providing
+                [(fixtures/one-fn) :mocked]
+                (= :other (fixtures/one-fn))))))
 
   (testing "mocks functions with arguments"
     (macros/providing
@@ -49,6 +57,14 @@
     (macros/verifying
       [(fixtures/one-fn) :mocked (matchers/exactly 1)]
       (is (= :mocked (fixtures/one-fn)))))
+
+  (testing "returns return value of body"
+    (is (true? (macros/verifying
+                [(fixtures/one-fn) :mocked (matchers/exactly 1)]
+                (= :mocked (fixtures/one-fn)))))
+    (is (false? (macros/verifying
+                [(fixtures/one-fn) :mocked (matchers/exactly 1)]
+                (= :other (fixtures/one-fn))))))
 
   (testing "mocks functions with arguments"
     (macros/verifying

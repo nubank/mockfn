@@ -4,6 +4,9 @@ All notable changes to this project are documented in this file.
 
 ## Releases
 
+### Unreleased
+- `verifying` now returns the return value of the body (like `providing` does)
+
 ### 0.5.0 - 2019-09-04
 - Support for mocking private functions.
 
@@ -23,7 +26,7 @@ All notable changes to this project are documented in this file.
 ### 0.1.0 - 2018-03-18
 - Added function stubs.
 - Added call verification.
-- Added argument matchers. 
+- Added argument matchers.
 
 ## Planned
 
