@@ -34,16 +34,24 @@
   (utils/formatted "Unexpected call to %s with args %s"
                    (func-or-unbound-var func) args))
 
+(defn- extract [spec args prop]
+  (for-args
+   (into {} (map
+             (fn [[k v]] [k (get v prop)])
+             (:stubbed/calls spec)))
+   args))
+
 (defn- ensure-expected-call
   "Throws an exception if the given call is unexpected."
   [func spec args]
-  (when (-> spec :return-values (for-args args) #{::unexpected-call})
+  (when (#{::unexpected-call} (extract spec args :providing/return-value))
     (throw (ex-info (unexpected-call-msg func args) {}))))
 
 (defn- increase-call-count
   "Tracks the number of times a specific call is performed."
   [spec args]
-  (-> spec :times-called (for-args args) (swap! inc)))
+  (some-> (extract spec args :verifying/times-called)
+          (swap! inc)))
 
 (defn call->ret-val
   "Produces the return value for a mocked call.
@@ -55,13 +63,13 @@
   (ensure-expected-call func spec args)
   (increase-call-count spec args)
 
-  (let [ret-val (-> spec :return-values (for-args args))]
+  (let [ret-val (extract spec args :providing/return-value)]
     (cond
       (instance? Calling ret-val)
       (-> ret-val :function (apply args))
 
       (instance? CallingOriginal ret-val)
-      (-> spec :function (apply args))
+      (-> spec :stubbed/function (apply args))
 
       :default
       ret-val)))

@@ -106,6 +106,15 @@
       [(#'fixtures/private-fn) :mocked-private (matchers/exactly 1)]
       (is (= :mocked-private (#'fixtures/private-fn)))))
 
+  (testing "matches anon fn arguments"
+    (macros/verifying [(fixtures/one-fn (fn [x] (= 1 x))) :a (matchers/exactly 1)]
+                      (is (= :a (fixtures/one-fn 1))))
+
+    (macros/verifying [(fixtures/one-fn (fn [x] (= 1 x))) :a (matchers/exactly 1)
+                       (fixtures/one-fn (fn [x] (= 2 x))) :a (matchers/exactly 1)]
+                      (is (= :a (fixtures/one-fn 1)))
+                      (is (= :a (fixtures/one-fn 2)))))
+
   (testing "fails if calls to private functions are not performed the expected number of times"
     (is (thrown-with-msg?
           ExceptionInfo #"Expected .* with arguments"

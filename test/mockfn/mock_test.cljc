@@ -5,46 +5,42 @@
             [mockfn.fixtures :as fixtures])
   #?(:clj (:import (clojure.lang ExceptionInfo Keyword))))
 
-(deftest mock-test
-  (let [definition {:return-values {[]            :no-args
-                                    [:arg1]       :one-arg
-                                    [:arg1 :arg2] :two-args
-                                    [:nil]        nil}
-                    :times-called  {[]            (atom 0)
-                                    [:arg1]       (atom 0)
-                                    [:arg1 :arg2] (atom 0)
-                                    [:nil]        (atom 0)}}
-        mock       (mock/mock fixtures/one-fn definition)]
+(deftest stub-test
+  (let [definition {:stubbed/calls {[]            {:providing/return-value :no-args}
+                                    [:arg1]       {:providing/return-value :one-arg}
+                                    [:arg1 :arg2] {:providing/return-value :two-args}
+                                    [:nil]        {:providing/return-value nil}}}
+        stub       (mock/mock fixtures/one-fn definition)]
     (testing "returns to expected calls with configured return values"
-      (is (= :no-args (mock)))
-      (is (= :one-arg (mock :arg1)))
-      (is (= :two-args (mock :arg1 :arg2)))
-      (is (= nil (mock :nil))))
+      (is (= :no-args (stub)))
+      (is (= :one-arg (stub :arg1)))
+      (is (= :two-args (stub :arg1 :arg2)))
+      (is (= nil (stub :nil))))
 
     (testing "throws exception when called with unexpected arguments"
       (let [message-regex #?(:clj #"Unexpected call to Unbound: #'mockfn.fixtures/one-fn with args \[:unexpected\]"
                              :cljs #"Unexpected call to <unbound var> with args \[:unexpected\]")]
         (is (thrown-with-msg?
               ExceptionInfo message-regex
-              (mock :unexpected)))))))
+              (stub :unexpected)))))))
 
 (deftest mock-call-count-test
-  (let [definition {:function       'fixtures/one-fn
-                    :return-values  {[]            :no-args
-                                     [:arg1]       :one-arg
-                                     [:arg1 :arg2] :two-args}
-                    :times-called   {[]            (atom 0)
-                                     [:arg1]       (atom 0)
-                                     [:arg1 :arg2] (atom 0)}
-                    :times-expected {[]            [(matchers/exactly 2)]
-                                     [:arg1]       [(matchers/exactly 1)]
-                                     [:arg1 :arg2] [(matchers/exactly 0)]}}
+  (let [definition {:stubbed/function 'fixtures/one-fn
+                    :stubbed/calls    {[]            {:providing/return-value   :no-args
+                                                      :verifying/times-called   (atom 0)
+                                                      :verifying/times-expected (matchers/exactly 2)}
+                                       [:arg1]       {:providing/return-value   :one-arg
+                                                      :verifying/times-called   (atom 0)
+                                                      :verifying/times-expected (matchers/exactly 1)}
+                                       [:arg1 :arg2] {:providing/return-value   :two-args
+                                                      :verifying/times-called   (atom 0)
+                                                      :verifying/times-expected (matchers/exactly 0)}}}
         mock       (mock/mock fixtures/one-fn definition)]
     (testing "counts the number of times that each call was performed"
       (mock) (mock) (mock :arg1)
-      (is (= 2 (-> mock meta (get-in [:times-called []]) deref)))
-      (is (= 1 (-> mock meta (get-in [:times-called [:arg1]]) deref)))
-      (is (= 0 (-> mock meta (get-in [:times-called [:arg1 :arg2]]) deref))))
+      (is (= 2 (-> mock meta (get-in [:stubbed/calls [] :verifying/times-called]) deref)))
+      (is (= 1 (-> mock meta (get-in [:stubbed/calls [:arg1] :verifying/times-called]) deref)))
+      (is (= 0 (-> mock meta (get-in [:stubbed/calls [:arg1 :arg2] :verifying/times-called]) deref))))
 
     (testing "verifies that calls were performed the expected number of times"
       (is nil? (mock/verify mock))
@@ -55,36 +51,23 @@
             (mock/verify mock))))))
 
 (deftest mock-match-argument-test
-  (let [definition {:function      'fixtures/one-fn
-                    :return-values {[:argument]            :equal
-                                    [(matchers/a Keyword)] :matchers-a
-                                    [(matchers/pred odd?)] :odd
-                                    [(matchers/any)]       :matchers-any}
-                    :times-called  {[:argument]            (atom 0)
-                                    [(matchers/a Keyword)] (atom 0)
-                                    [(matchers/pred odd?)] (atom 0)
-                                    [(matchers/any)]       (atom 0)}}
+  (let [definition {:stubbed/function 'fixtures/one-fn
+                    :stubbed/calls    {[:argument]            {:providing/return-value :equal}
+                                       [(matchers/a Keyword)] {:providing/return-value :matchers-a}
+                                       [(matchers/pred odd?)] {:providing/return-value :odd}
+                                       [(matchers/any)]       {:providing/return-value :matchers-any}}}
         mock       (mock/mock fixtures/one-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= :equal (mock :argument)))
       (is (= :matchers-a (mock :any-keyword)))
       (is (= :odd (mock 1)))
-      (is (= :matchers-any (mock "anything"))))
-
-    (testing "counts the number of times that each call was performed"
-      (is (= 1 (-> mock meta (get-in [:times-called [:argument]]) deref)))
-      (is (= 1 (-> mock meta (get-in [:times-called [(matchers/a Keyword)]]) deref)))
-      (is (= 1 (-> mock meta (get-in [:times-called [(matchers/pred odd?)]]) deref)))
-      (is (= 1 (-> mock meta (get-in [:times-called [(matchers/any)]]) deref))))))
+      (is (= :matchers-any (mock "anything"))))))
 
 (deftest mock-unmocked
-  (let [definition {:function      (fn [& args] args)
-                    :return-values {[]            (mock/calling-original)
-                                    [:arg1]       (mock/calling-original)
-                                    [:arg1 :arg2] (mock/calling-original)}
-                    :times-called  {[]            (atom 0)
-                                    [:arg1]       (atom 0)
-                                    [:arg1 :arg2] (atom 0)}}
+  (let [definition {:stubbed/function (fn [& args] args)
+                    :stubbed/calls    {[]            {:providing/return-value (mock/calling-original)}
+                                       [:arg1]       {:providing/return-value (mock/calling-original)}
+                                       [:arg1 :arg2] {:providing/return-value (mock/calling-original)}}}
         mock       (mock/mock fixtures/one-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= nil (mock)))
@@ -100,10 +83,8 @@
               (mock :unexpected)))))))
 
 (deftest private-fn-mock-test
-  (let [definition {:return-values {[]      :no-args
-                                    [:arg1] :one-arg}
-                    :times-called  {[]      (atom 0)
-                                    [:arg1] (atom 0)}}
+  (let [definition {:stubbed/calls {[]      {:providing/return-value :no-args}
+                                    [:arg1] {:providing/return-value :one-arg}}}
         mock       (mock/mock #'fixtures/private-fn definition)]
     (testing "returns to expected calls with configured return values"
       (is (= :no-args (mock)))

@@ -23,6 +23,6 @@
   (let [specs# (->> bindings (partition 3) internal.macro/bindings->specification)]
     `(with-redefs ~(internal.macro/specification->redef-bindings specs#)
        (let [res# (do ~@body)]
-         (doseq [mock# (keys ~specs#)]
+         (doseq [mock# ~(into [] (keys specs#))]
            (mock/verify mock#))
          res#))))

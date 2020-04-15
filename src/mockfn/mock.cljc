@@ -16,8 +16,8 @@
 
 (defn verify [mock]
   (let [spec (internal.mock/mock->spec mock)]
-    (doseq [args    (-> spec :times-expected keys)
-            matcher (-> spec :times-expected (get args))]
-      (let [times-called (-> spec :times-called (get args) deref)]
+    (doseq [[args stubbed-call] (:stubbed/calls spec)]
+      (let [matcher      (:verifying/times-expected stubbed-call)
+            times-called @(:verifying/times-called stubbed-call)]
         (when-not (matchers/matches? matcher times-called)
-          (throw (ex-info (internal.mock/matcher-failure-ex-msg (-> spec :function) args matcher times-called) {})))))))
+          (throw (ex-info (internal.mock/matcher-failure-ex-msg (-> spec :stubbed/function) args matcher times-called) {})))))))
