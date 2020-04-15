@@ -24,10 +24,12 @@
   describing a mock to be produced for every function in the bindings."
   [bindings]
   (reduce
-    (fn [acc [[func & args] ret-val & times-expected]]
-      (-> acc
-          (assoc-in [func :function] func)
-          (assoc-in [func :return-values (into [] args)] ret-val)
-          (assoc-in [func :times-called (into [] args)] `(atom 0))
-          (assoc-in [func :times-expected (into [] args)] (into [] times-expected))))
-    {} bindings))
+   (fn [acc [[func & args] ret-val & [verify-times-expected]]]
+     (-> acc
+         (assoc-in [func :stubbed/function] func)
+         (assoc-in [func :stubbed/calls (into [] args)]
+                   (cond-> {:providing/return-value ret-val}
+                     verify-times-expected
+                     (assoc :verifying/times-called   `(atom 0)
+                            :verifying/times-expected verify-times-expected)))))
+   {} bindings))

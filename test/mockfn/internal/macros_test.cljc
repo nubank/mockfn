@@ -16,33 +16,26 @@
 
   (testing "output includes functions"
     (is (= 'mockfn.fixtures/one-fn
-           (get-in specification ['mockfn.fixtures/one-fn :function])))
+           (get-in specification ['mockfn.fixtures/one-fn :stubbed/function])))
     (is (= 'mockfn.fixtures/other-fn
-           (get-in specification ['mockfn.fixtures/other-fn :function]))))
+           (get-in specification ['mockfn.fixtures/other-fn :stubbed/function]))))
 
   (testing "output includes return values for each function and argument list"
     (is (= :one-fn-return
-           (get-in specification ['mockfn.fixtures/one-fn :return-values []])))
+           (get-in specification ['mockfn.fixtures/one-fn :stubbed/calls [] :providing/return-value])))
     (is (= :one-fn-arg-return
-           (get-in specification ['mockfn.fixtures/one-fn :return-values [:arg]])))
+           (get-in specification ['mockfn.fixtures/one-fn :stubbed/calls [:arg] :providing/return-value])))
     (is (= :other-fn-return
-           (get-in specification ['mockfn.fixtures/other-fn :return-values []]))))
+           (get-in specification ['mockfn.fixtures/other-fn :stubbed/calls [] :providing/return-value]))))
 
   (testing "output includes atoms for counting calls for each function and argument list"
     (is (= '(clojure.core/atom 0)
-           (get-in specification ['mockfn.fixtures/one-fn :times-called []])))
-    (is (= '(clojure.core/atom 0)
-           (get-in specification ['mockfn.fixtures/one-fn :times-called [:arg]])))
-    (is (= '(clojure.core/atom 0)
-           (get-in specification ['mockfn.fixtures/other-fn :times-called []]))))
+           (get-in specification ['mockfn.fixtures/other-fn :stubbed/calls [] :verifying/times-called]))))
 
   (testing "output includes the call-count matcher for each function and argument list"
-    (is (= []
-           (get-in specification ['mockfn.fixtures/one-fn :times-expected []])))
-    (is (= []
-           (get-in specification ['mockfn.fixtures/one-fn :times-expected [:arg]])))
-    (is (= ['call-count-matcher]
-           (get-in specification ['mockfn.fixtures/other-fn :times-expected []])))))
+    (is (nil? (get-in specification ['mockfn.fixtures/one-fn :stubbed/calls [] :verifying/times-expected])))
+    (is (nil? (get-in specification ['mockfn.fixtures/one-fn :stubbed/calls [:arg] :verifying/times-expected])))
+    (is (= 'call-count-matcher (get-in specification ['mockfn.fixtures/other-fn :stubbed/calls [] :verifying/times-expected])))))
 
 (def redef-bindings
   (internal.macros/specification->redef-bindings specification))
