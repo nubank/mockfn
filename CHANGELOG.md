@@ -2,6 +2,9 @@
 
 All notable changes to this project are documented in this file.
 
+### 0.6.1 - 2020-04-15
+- `verifying` now supports anon functions as args [#4](https://github.com/nubank/mockfn/pull/4),[#5](https://github.com/nubank/mockfn/pull/5)
+
 ### 0.6.0 - 2020-03-18
 - `verifying` now returns the return value of the body (like `providing` does)
 
@@ -25,7 +28,3 @@ All notable changes to this project are documented in this file.
 - Added function stubs.
 - Added call verification.
 - Added argument matchers.
-
-## Planned
-
-- Chained responses
