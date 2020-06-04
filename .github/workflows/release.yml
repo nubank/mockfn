@@ -16,8 +16,11 @@ jobs:
     - name: Install dependencies
       run: lein deps
 
-    - name: Run tests
+    - name: Run clj tests
       run: lein test
+
+    - name: Run cljs tests
+      run: lein test-node
 
     - name: Publish
       run: lein deploy publish
