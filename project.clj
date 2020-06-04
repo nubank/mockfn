@@ -3,7 +3,7 @@
   :url "https://github.com/pmatiello/mockfn"
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.10.0"]]
+  :dependencies [[org.clojure/clojure "1.10.1"]]
 
   :repositories [["publish" {:url "https://clojars.org/repo"
                              :username :env/clojars_username
@@ -14,7 +14,8 @@
 
   :profiles {:dev {:plugins [[lein-cljsbuild "1.1.7"]
                              [lein-doo "0.1.11"]]
-                   :dependencies [[org.clojure/clojurescript "1.10.520"]]}}
+                   :dependencies [[org.clojure/clojurescript "1.10.520"]
+                                  [org.clojure/core.rrb-vector "0.1.1"]]}}
 
   :aliases {"test-phantom" ["doo" "phantom" "test"]
             "test-node" ["doo" "node" "node-test" "once"]
