@@ -31,8 +31,11 @@
 (defn- unexpected-call-msg
   "Exception message for unexpected call."
   [func args]
-  (utils/formatted "Unexpected call to %s with args %s"
-                   (func-or-unbound-var func) args))
+  (utils/formatted
+    "An unexpected unmocked call to %s was made with %d argument(s): %s"
+    (func-or-unbound-var func)
+    (count args)
+    args))
 
 (defn- extract [spec args prop]
   (for-args

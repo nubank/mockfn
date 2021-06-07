@@ -26,10 +26,10 @@
       (is (= :mocked (fixtures/one-fn :expected)))
       (is (= :also-mocked (fixtures/one-fn :expected :also-expected)))
       (is (thrown-with-msg?
-            ExceptionInfo #"Unexpected call"
+            ExceptionInfo #"An unexpected"
             (fixtures/one-fn :unexpected)))
       (is (thrown-with-msg?
-            ExceptionInfo #"Unexpected call"
+            ExceptionInfo #"An unexpected"
             (fixtures/one-fn)))))
 
   (testing "mocks functions with argument matchers"
@@ -37,7 +37,7 @@
       [(fixtures/one-fn (matchers/a Keyword)) :mocked]
       (is (= :mocked (fixtures/one-fn :expected)))
       (is (thrown-with-msg?
-            ExceptionInfo #"Unexpected call"
+            ExceptionInfo #"An unexpected"
             (fixtures/one-fn "unexpected")))))
 
   (testing "mocks multiple functions at once"
@@ -73,10 +73,10 @@
       (is (= :mocked (fixtures/one-fn :expected)))
       (is (= :also-mocked (fixtures/one-fn :expected :also-expected)))
       (is (thrown-with-msg?
-            ExceptionInfo #"Unexpected call"
+            ExceptionInfo #"An unexpected"
             (fixtures/one-fn :unexpected)))
       (is (thrown-with-msg?
-            ExceptionInfo #"Unexpected call"
+            ExceptionInfo #"An unexpected"
             (fixtures/one-fn)))))
 
   (testing "mocks functions with argument matchers"
@@ -84,7 +84,7 @@
       [(fixtures/one-fn (matchers/a Keyword)) :mocked (matchers/exactly 1)]
       (is (= :mocked (fixtures/one-fn :expected)))
       (is (thrown-with-msg?
-            ExceptionInfo #"Unexpected call"
+            ExceptionInfo #"An unexpected"
             (fixtures/one-fn "unexpected")))))
 
   (testing "mocks multiple functions at once"
