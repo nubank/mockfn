@@ -52,3 +52,13 @@
                      (str predicate))))
 
 (def pred ->Predicate)
+
+(def any-args?
+  "A special directive that always matches regardless of the number or form of
+  arguments provided. Useful as a terminal fall-through case when mocking.
+
+  For example:
+  (providing [(inc any-args?) :placeholder-inc-result]
+    (inc 1) ;=> :placeholder-inc-result
+    (inc 1 2 3 4) ;=> :placeholder-inc-result)"
+  ::any-args?)

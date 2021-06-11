@@ -7,9 +7,15 @@
   "Invoke mocked value as a function instead of returning it."
   [func] (mock/calling func))
 
-(def unmocked
+(def fall-through
   "Invoke the original implementation of the mocked function."
   (mock/calling-original))
+
+(def unmocked
+  "DEPRECATED: renamed to `fall-through`
+
+  Invoke the original implementation of the mocked function."
+  fall-through)
 
 (defmacro providing
   "Mocks functions."

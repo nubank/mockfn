@@ -59,14 +59,14 @@ If you would like to call the value instead of returning it, use `mockfn.macros/
     (is (thrown? ExceptionInfo (one-fn)))))
 ```
 
-#### `unmocked`
+#### `fall-through`
 
-When mocking it is sometimes useful to set some mocks to point to their
-original implementation. This can be done by using `mockfn.macros/unmocked`:
+When mocking a function, it is sometimes useful to allow calls with specific
+arguments to fall through to their original implementation:
 
 ```clj
-(testing "providing - using unmocked to default to original function"
-  (providing [(one-fn :argument-1) unmocked
+(testing "providing - using fall-through to default to original function"
+  (providing [(one-fn :argument-1) mockfn.macros/fall-through
               (one-fn :argument-2) :result-2]
     (is (thrown? ExceptionInfo (one-fn)))))
 ```
