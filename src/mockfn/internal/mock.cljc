@@ -28,7 +28,7 @@
   "Returns the given function or an \"<unbound var>\" string if the
   function is nil (cljs doesn't have unbound vars)."
   [func]
-  (or (string/replace-first (str func) "Unbound: #'" "")
+  (or (some-> func str (string/replace-first "Unbound: #'" ""))
       "<unbound var>"))
 
 (defn- unexpected-call-msg
