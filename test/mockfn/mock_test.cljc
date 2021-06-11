@@ -70,7 +70,7 @@
       (is (= :odd (mock 1)))
       (is (= :matchers-any (mock "anything"))))))
 
-(deftest mock-unmocked
+(deftest mock-fall-through
   (let [definition {:stubbed/function (fn [& args] args)
                     :stubbed/calls    {[]            {:providing/return-value (mock/calling-original)}
                                        [:arg1]       {:providing/return-value (mock/calling-original)}

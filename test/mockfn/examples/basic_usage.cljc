@@ -43,8 +43,8 @@
       (is (= :odd (one-fn 1)))
       (is (= :inc-fn (one-fn inc)))))
 
-  (testing "providing - unmocked"
-    (mfn/providing [(implemented-fn :argument-1) mfn/unmocked
+  (testing "providing - fall-through"
+    (mfn/providing [(implemented-fn :argument-1) mfn/fall-through
                     (implemented-fn :argument-2) :result-2]
       (is (= :argument-1 (implemented-fn :argument-1)))
       (is (= :result-2 (implemented-fn :argument-2)))))
