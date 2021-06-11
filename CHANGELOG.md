@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+### 0.7.0 - 2021-06-11
+- Introduce `mockfn.matchers/any-args?`: a matcher that's always satisfied regardless of the number or form of arguments it matches against
+- Improve error message when a function being mocked doesn't have a matching mock case.
+- Deprecate `mockfn.macros/unmocked` in favor of `mockfn.macros/fall-through` for the sake of clarity.
+
 ### 0.6.1 - 2020-04-15
 - `verifying` now supports anon functions as args [#4](https://github.com/nubank/mockfn/pull/4),[#5](https://github.com/nubank/mockfn/pull/5)
 
