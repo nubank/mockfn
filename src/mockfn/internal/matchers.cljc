@@ -19,4 +19,5 @@
   [expected args]
   (let [arity-matches?    (= (count expected) (count args))
         each-arg-matches? (every? matches-arg? (map vector expected args))]
-    (and arity-matches? each-arg-matches?)))
+    (or (= expected [matchers/any-args?])
+        (and arity-matches? each-arg-matches?))))

@@ -49,6 +49,12 @@
       (is (= :argument-1 (implemented-fn :argument-1)))
       (is (= :result-2 (implemented-fn :argument-2)))))
 
+  (testing "providing - fall-through via any-args?"
+    (mfn/providing [(implemented-fn :argument-1) :result-1
+                    (implemented-fn matchers/any-args?) :result-any]
+      (is (= :result-1 (implemented-fn :argument-1)))
+      (is (= :result-any (implemented-fn :argument-2)))))
+
   (testing "verifying"
     (mfn/verifying [(one-fn :argument) :result (matchers/exactly 1)]
       (is (= :result (one-fn :argument)))))
