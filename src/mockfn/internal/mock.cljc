@@ -1,5 +1,6 @@
 (ns mockfn.internal.mock
-  (:require [mockfn.internal.utils :as utils]
+  (:require [clojure.string :as string]
+            [mockfn.internal.utils :as utils]
             [mockfn.internal.matchers :as internal.matchers]
             [mockfn.matchers :as matchers]))
 
@@ -27,7 +28,8 @@
   "Returns the given function or an \"<unbound var>\" string if the
   function is nil (cljs doesn't have unbound vars)."
   [func]
-  (or func "<unbound var>"))
+  (or (string/replace-first (str func) "Unbound: #'" "")
+      "<unbound var>"))
 
 (defn- unexpected-call-msg
   "Exception message for unexpected call."

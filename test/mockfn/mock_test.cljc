@@ -18,14 +18,14 @@
       (is (= nil (stub :nil))))
 
     (testing "throws exception when called with unexpected arguments"
-      (let [message-regex #?(:clj #"Unbound: #'mockfn.fixtures/one-fn was specified as mocked"
+      (let [message-regex #?(:clj #"mockfn.fixtures/one-fn was specified as mocked"
                              :cljs #"<unbound var> was specified as mocked")]
         (is (thrown-with-msg?
               ExceptionInfo message-regex
               (stub :unexpected-a :unexpected-b)))))
 
     (testing "throws exception when called with 1 unexpected argument"
-      (let [message-regex #?(:clj #"Unbound: #'mockfn.fixtures/one-fn was specified as mocked"
+      (let [message-regex #?(:clj #"mockfn.fixtures/one-fn was specified as mocked"
                              :cljs #"<unbound var> was specified as mocked")]
         (is (thrown-with-msg?
               ExceptionInfo message-regex
@@ -82,7 +82,7 @@
       (is (= [:arg1 :arg2] (mock :arg1 :arg2))))
 
     (testing "throws exception when called with unexpected arguments"
-      (let [message-regex #?(:clj #"Unbound: #'mockfn.fixtures/one-fn was specified as mocked"
+      (let [message-regex #?(:clj #"mockfn.fixtures/one-fn was specified as mocked"
                              :cljs #"<unbound var> was specified as mocked")]
         (is (thrown-with-msg?
               ExceptionInfo
