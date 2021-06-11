@@ -13,13 +13,14 @@
       matchers)))
 
 (defn- for-args
-  "Takes a map m where the keys are lists of matchers. Retrieves from this
-  map a value for which the list args fulfill the list of matchers in the key.
+  "Takes a map `arg-matchers->result` where the keys are lists of matchers.
+  Retrieves from this map a value for which the list args fulfill the list of
+  matchers in the key.
 
   If args doesn't satisfy any list of matchers, returns ::unexpected-call."
-  [m args]
-  (if-let [expected (some (matching-fn-for args) (keys m))]
-    (get m expected)
+  [arg-matchers->result args]
+  (if-let [expected (some (matching-fn-for args) (keys arg-matchers->result))]
+    (get arg-matchers->result expected)
     ::unexpected-call))
 
 (defn- func-or-unbound-var
@@ -37,12 +38,12 @@
     (count args)
     args))
 
+(defn- map-vals [f m]
+  (into {} (for [[k v] m] [k (f v)])))
+
 (defn- extract [spec args prop]
-  (for-args
-   (into {} (map
-             (fn [[k v]] [k (get v prop)])
-             (:stubbed/calls spec)))
-   args))
+  (let [arg-matchers->result (map-vals #(get % prop) (:stubbed/calls spec))]
+    (for-args arg-matchers->result args)))
 
 (defn- ensure-expected-call
   "Throws an exception if the given call is unexpected."
