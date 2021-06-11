@@ -32,11 +32,19 @@
 (defn- unexpected-call-msg
   "Exception message for unexpected call."
   [func args]
-  (utils/formatted
-    "An unexpected unmocked call to %s was made with %d argument(s): %s"
-    (func-or-unbound-var func)
-    (count args)
-    args))
+  (let [f (func-or-unbound-var func)]
+    (utils/formatted
+      "%s was specified as mocked but none of the cases matched the %d provided argument(s):
+  %s
+
+Either
+ - specify a mock case for those arguments
+ - specify falling through to the original functionality via a terminal match clause:
+  `(%s mockfn.matchers/any-args?) mockfn.macros/fall-through"
+      f
+      (count args)
+      args
+      f)))
 
 (defn- map-vals [f m]
   (into {} (for [[k v] m] [k (f v)])))
