@@ -25,6 +25,12 @@
       (is (thrown? ExceptionInfo (one-fn :argument-1)))
       (is (= :result-2 (one-fn :argument-2)))))
 
+  (testing "providing - cause function returns different results"
+    (mfn/providing [(one-fn :argument-1) (mfn/returning :result-1 :result-2 )]
+      (is (= :result-1 (one-fn :argument-1)))
+      (is (= :result-2 (one-fn :argument-1)))
+      (is (nil? (one-fn :argument-1)))))
+
   (testing "providing with more than one function"
     (mfn/providing [(one-fn :argument) :result-1
                     (other-fn :argument) :result-2]

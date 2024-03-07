@@ -59,6 +59,19 @@ If you would like to call the value instead of returning it, use `mockfn.macros/
     (is (thrown? ExceptionInfo (one-fn)))))
 ```
 
+#### `returning`
+
+If you want to return different values for each invocation, use `mockfn.macros/returning`.
+Note that if the function will return `nil` afer all provided results are consumed.
+
+```clj
+(testing "providing - cause function non referential"
+    (mfn/providing [(one-fn :argument-1) (mfn/returning :result-1 :result-2 )]
+                   (is (= :result-1 (one-fn :argument-1)))
+                   (is (= :result-2 (one-fn :argument-1)))
+                   (is (nil? (one-fn :argument-1)))))
+```
+
 #### `fall-through`
 
 When mocking a function, it is sometimes useful to allow calls with specific
