@@ -32,3 +32,13 @@
          (doseq [mock# ~(into [] (keys specs#))]
            (mock/verify mock#))
          res#))))
+
+(defn returning
+  "Returns one value after the other. Used with `calling`"
+  [& values]
+  (let [stack (atom (into [] (reverse values)))
+        next (fn [_] (let [ret (peek @stack)]
+                       (when-not (empty? @stack)
+                         (swap! stack pop))
+                       ret))]
+    (calling next)))
