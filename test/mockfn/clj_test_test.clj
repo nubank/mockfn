@@ -61,6 +61,22 @@
   (mfn/providing
     (fixtures/other-fn) :deftest-testing-pt2))
 
+(mfn/deftest testing-verifying-inside-let-test
+  ;; Regression for #3: providing/verifying nested under `let` inside `testing`.
+  (mfn/testing "verifying nested in let"
+    (let [one 1]
+      (swap! tests-run conj (fixtures/one-fn))
+      (is (= 1 one))
+      (mfn/verifying
+        (fixtures/one-fn) :testing-verifying-inside-let (matchers/exactly 1)))))
+
+(mfn/deftest providing-inside-let-inside-testing-test
+  (mfn/testing "providing nested in let"
+    (let [_unused :ok]
+      (swap! tests-run conj (fixtures/one-fn))
+      (mfn/providing
+        (fixtures/one-fn) :testing-providing-inside-let))))
+
 (def expected-tests-run
   #{:deftest
     :deftest-providing
@@ -73,7 +89,9 @@
     :testing-providing-with-verifying
     :testing-verifying-with-providing
     :deftest-testing-pt1
-    :deftest-testing-pt2})
+    :deftest-testing-pt2
+    :testing-verifying-inside-let
+    :testing-providing-inside-let})
 
 (defn teardown []
   (is (= @tests-run expected-tests-run))
