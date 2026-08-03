@@ -221,6 +221,19 @@ It can be used to specify `mockfn` argument matching behavior, for example:
 
 ## Quirks and Limitations
 
+`mockfn.clj-test/testing` and `mockfn.clj-test/deftest` collect `providing` /
+`verifying` forms from anywhere in their body, including inside a `let` (or
+other sequential forms). This is intentional so the flatter mocking style works
+with local bindings:
+
+```clj
+(mfn/deftest addition-test
+  (mfn/testing "addition"
+    (let [one 1]
+      (is (= 3 (add one 2)))
+      (mfn/verifying (add 1 2) 3 (at-least 1)))))
+```
+
 While `providing` and `verifying` calls can be nested, all required stubs and
 expectations for a single mock must be defined in the same call. Mocking a
 function in a inner `providing` or `verifying` call will override any
